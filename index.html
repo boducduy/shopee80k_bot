@@ -3,68 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thông tin Voucher</title>
+    <title>Đặt Voucher Shopee</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 500; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; }
-        textarea { resize: vertical; }
-        button { width: 100%; padding: 16px; background-color: var(--tg-theme-button-color, #3390ec); color: var(--tg-theme-button-text-color, #ffffff); border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #fff);
+            color: var(--tg-theme-text-color, #000);
+            padding: 20px;
+            margin: 0;
+        }
+        h2 {
+            text-align: center;
+            color: var(--tg-theme-button-color, #3390ec);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            color: var(--tg-theme-text-color, #000);
+            font-size: 16px;
+        }
+        input:focus {
+            outline: 2px solid var(--tg-theme-button-color, #3390ec);
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #fff);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .note {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+            text-align: center;
+        }
+        .required {
+            color: red;
+        }
     </style>
 </head>
 <body>
-    <h3 style="text-align: center; margin-top: 0;">Điền thông tin đơn hàng</h3>
-    
+
+    <h2>📦 ĐƠN ĐẶT VOUCHER</h2>
+
     <div class="form-group">
-        <label>📦 Mã sản phẩm</label>
-        <input type="text" id="code" placeholder="Nhập mã (Nếu không có hãy ghi 0)">
-    </div>
-    
-    <div class="form-group">
-        <label>👕 Size / Màu sắc</label>
-        <input type="text" id="size" placeholder="Nhập size (Nếu không có hãy ghi 0)">
+        <label>1. Link Sản Phẩm <span class="required">*</span></label>
+        <input type="text" id="link" placeholder="Dán link Shopee vào đây" required>
     </div>
 
     <div class="form-group">
-        <label>🏠 Địa chỉ + SĐT</label>
-        <textarea id="address" rows="3" placeholder="Nhập địa chỉ (Nếu không có hãy ghi 0)"></textarea>
-    </div>
-    
-    <div class="form-group">
-        <label>🔢 Số lượng</label>
-        <input type="number" id="quantity" value="1">
+        <label>2. Số Điện Thoại <span class="required">*</span></label>
+        <input type="tel" id="phone" placeholder="Nhập SĐT nhận hàng" required>
     </div>
 
-    <button onclick="sendData()">GỬI ĐƠN HÀNG</button>
+    <div class="form-group">
+        <label>3. Tên SP</label>
+        <input type="text" id="code" placeholder="Ví dụ: ABC.">
+    </div>
+
+    <div class="form-group">
+        <label>4. Phân loại (Màu/Size)</label>
+        <input type="text" id="size" placeholder="Ví dụ: Màu Đen, Size L">
+    </div>
+
+    <div class="form-group">
+        <label>5. Số lượng</label>
+        <input type="number" id="quantity" value="1" min="1">
+    </div>
+
+    <div class="form-group">
+        <label>6. Địa chỉ nhận hàng</label>
+        <textarea id="address" rows="2" placeholder="Số nhà, Phường, Quận, Tỉnh..."></textarea>
+    </div>
+
+    <button class="btn-submit" onclick="sendData()">🚀 GỬI ĐƠN HÀNG</button>
+    <p class="note">Vui lòng kiểm tra kỹ thông tin trước khi gửi.</p>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); 
+        tg.expand(); // Mở rộng full màn hình
 
         function sendData() {
-            // Lấy dữ liệu và xóa khoảng trắng thừa
+            let link = document.getElementById("link").value.trim();
+            let phone = document.getElementById("phone").value.trim();
             let code = document.getElementById("code").value.trim();
             let size = document.getElementById("size").value.trim();
-            let address = document.getElementById("address").value.trim();
             let quantity = document.getElementById("quantity").value;
+            let address = document.getElementById("address").value.trim();
 
-            // KIỂM TRA: Nếu có ô nào để trống thì hiện thông báo yêu cầu ghi 0
-            if(!code || !size || !address) {
-                tg.showAlert("Hãy ghi 0 nếu đơn hàng của bạn không có thông tin này!");
-                return; // Dừng lại, không gửi đơn
+            // Kiểm tra dữ liệu bắt buộc
+            if (!link || !phone) {
+                tg.showPopup({
+                    title: "Thiếu thông tin",
+                    message: "Vui lòng nhập Link sản phẩm và Số điện thoại!",
+                    buttons: [{type: "ok"}]
+                });
+                return;
             }
 
-            // Nếu đã điền (kể cả điền số 0) thì gửi đi
-            let data = JSON.stringify({ 
-                code: code, 
-                size: size, 
-                address: address, 
-                quantity: quantity 
-            });
-            tg.sendData(data);
+            let data = {
+                link: link,
+                phone: phone,
+                code: code || "Không ghi",
+                size: size || "Ngẫu nhiên",
+                quantity: quantity,
+                address: address || "Địa chỉ mặc định"
+            };
+
+            // Gửi dữ liệu về lại Bot Python
+            tg.sendData(JSON.stringify(data));
         }
     </script>
+
 </body>
 </html>
