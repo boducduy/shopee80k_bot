@@ -128,9 +128,9 @@
     </div>
 
     <div class="form-group">
-        <label>7. Ảnh đơn mẫu (Tùy chọn)</label>
-        <input type="text" id="image_note" placeholder="Dán link ảnh hoặc để trống">
-        <div class="upload-hint">💡 Nếu không có link, bạn có thể gửi ảnh trực tiếp qua chat cho Bot sau khi ấn Gửi đơn.</div>
+        <label>7. Ảnh hoặc File mẫu (Tùy chọn)</label>
+        <input type="text" id="image_note" placeholder="Dán link hoặc để trống...">
+        <div class="upload-hint">💡 Bạn có thể dán link vào đây hoặc để trống. Sau khi nhấn "Gửi đơn hàng", bạn có thể gửi Ảnh hoặc File trực tiếp qua tin nhắn cho Bot.</div>
     </div>
 
     <button class="btn-submit" onclick="sendData()">🚀 GỬI ĐƠN HÀNG</button>
@@ -146,9 +146,24 @@
             $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function(data_tinh) {
                 if (data_tinh.error == 0) {
                     let row = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
-                    $.each(data_tinh.data, function(key, val) {
-                        row += '<option value="' + val.id + '">' + val.full_name + '</option>';
+                    
+                    // Tách Hà Nội và TP HCM ra để đưa lên đầu
+                    let hanoi = data_tinh.data.find(x => x.id === "01");
+                    let hcm = data_tinh.data.find(x => x.id === "79");
+                    let others = data_tinh.data.filter(x => x.id !== "01" && x.id !== "79");
+
+                    // Thêm Hà Nội và HCM vào đầu danh sách
+                    if (hanoi) row += `<option value="${hanoi.id}">${hanoi.full_name}</option>`;
+                    if (hcm) row += `<option value="${hcm.id}">${hcm.full_name}</option>`;
+                    
+                    // Thêm gạch ngăn cách (nếu cần)
+                    if (hanoi || hcm) row += '<option disabled>──────────</option>';
+
+                    // Thêm các tỉnh còn lại
+                    $.each(others, function(key, val) {
+                        row += `<option value="${val.id}">${val.full_name}</option>`;
                     });
+                    
                     $("#province").html(row);
                 }
             });
