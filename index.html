@@ -140,64 +140,59 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // --- XỬ LÝ API ĐỊA CHỈ VIỆT NAM ---
-        const host = "https://provinces.open-api.vn/api/";
-        
-        // 1. Tải danh sách Tỉnh/Thành phố khi mở web
-        var callAPI = (api) => {
-            return axios.get(api)
-                .then((response) => {
-                    renderData(response.data, "province");
-                });
-        }
-        callAPI(host + "?depth=1");
-
-        // 2. Xử lý khi chọn Tỉnh -> Tải Quận/Huyện
-        var callApiDistrict = (api) => {
-            return axios.get(api)
-                .then((response) => {
-                    renderData(response.data.districts, "district");
-                });
-        }
-
-        // 3. Xử lý khi chọn Quận -> Tải Phường/Xã
-        var callApiWard = (api) => {
-            return axios.get(api)
-                .then((response) => {
-                    renderData(response.data.wards, "ward");
-                });
-        }
-
-        // Hàm hiển thị dữ liệu lên Select box
-        var renderData = (array, select) => {
-            let row = ' <option value="">' + (select == "province" ? "-- Chọn Tỉnh/Thành --" : (select == "district" ? "-- Chọn Quận/Huyện --" : "-- Chọn Phường/Xã --")) + '</option>';
-            array.forEach(element => {
-                row += `<option value="${element.code}">${element.name}</option>`
+        // --- XỬ LÝ API ĐỊA CHỈ VIỆT NAM (Nguồn: esgoo.net - Dữ liệu 2024) ---
+        $(document).ready(function() {
+            // 1. Lấy danh sách Tỉnh/Thành phố
+            $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function(data_tinh) {
+                if (data_tinh.error == 0) {
+                    let row = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
+                    $.each(data_tinh.data, function(key, val) {
+                        row += '<option value="' + val.id + '">' + val.full_name + '</option>';
+                    });
+                    $("#province").html(row);
+                }
             });
-            document.querySelector("#" + select).innerHTML = row;
-        }
 
-        // Sự kiện thay đổi lựa chọn
-        $("#province").change(() => {
-            let provinceCode = $("#province").val();
-            if (provinceCode) {
-                callApiDistrict(host + "p/" + provinceCode + "?depth=2");
-                $("#district").prop("disabled", false);
-                $("#ward").prop("disabled", true).html('<option value="">-- Chọn Phường/Xã --</option>');
-            } else {
-                $("#district").prop("disabled", true).html('<option value="">-- Chọn Quận/Huyện --</option>');
-                $("#ward").prop("disabled", true).html('<option value="">-- Chọn Phường/Xã --</option>');
-            }
-        });
+            // 2. Lấy danh sách Quận/Huyện khi chọn Tỉnh
+            $("#province").change(function() {
+                let idtinh = $(this).val();
+                
+                // Reset Quận/Huyện và Phường/Xã
+                $("#district").html('<option value="">-- Chọn Quận/Huyện --</option>').attr("disabled", true);
+                $("#ward").html('<option value="">-- Chọn Phường/Xã --</option>').attr("disabled", true);
 
-        $("#district").change(() => {
-            let districtCode = $("#district").val();
-            if (districtCode) {
-                callApiWard(host + "d/" + districtCode + "?depth=2");
-                $("#ward").prop("disabled", false);
-            } else {
-                $("#ward").prop("disabled", true).html('<option value="">-- Chọn Phường/Xã --</option>');
-            }
+                if (idtinh) {
+                    $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function(data_quan) {
+                        if (data_quan.error == 0) {
+                            let row = '<option value="">-- Chọn Quận/Huyện --</option>';
+                            $.each(data_quan.data, function(key, val) {
+                                row += '<option value="' + val.id + '">' + val.full_name + '</option>';
+                            });
+                            $("#district").html(row).attr("disabled", false);
+                        }
+                    });
+                }
+            });
+
+            // 3. Lấy danh sách Phường/Xã khi chọn Quận
+            $("#district").change(function() {
+                let idquan = $(this).val();
+                
+                // Reset Phường/Xã
+                $("#ward").html('<option value="">-- Chọn Phường/Xã --</option>').attr("disabled", true);
+
+                if (idquan) {
+                    $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function(data_phuong) {
+                        if (data_phuong.error == 0) {
+                            let row = '<option value="">-- Chọn Phường/Xã --</option>';
+                            $.each(data_phuong.data, function(key, val) {
+                                row += '<option value="' + val.id + '">' + val.full_name + '</option>';
+                            });
+                            $("#ward").html(row).attr("disabled", false);
+                        }
+                    });
+                }
+            });
         });
 
         // --- GỬI DỮ LIỆU ---
@@ -215,7 +210,7 @@
             let districtText = $("#district option:selected").text();
             let wardText = $("#ward option:selected").text();
             
-            // Kiểm tra validate địa chỉ
+            // Kiểm tra validate địa chỉ (Kiểm tra ID có được chọn không)
             let provinceVal = $("#province").val();
             let districtVal = $("#district").val();
             let wardVal = $("#ward").val();
@@ -229,7 +224,7 @@
                 return;
             }
 
-            // Ghép địa chỉ thành chuỗi
+            // Ghép địa chỉ thành chuỗi hoàn chỉnh
             let fullAddress = `${house}, ${wardText}, ${districtText}, ${provinceText}`;
 
             let data = {
@@ -238,13 +233,12 @@
                 code: code || "Không ghi",
                 size: size || "Ngẫu nhiên",
                 quantity: quantity,
-                address: fullAddress, // Gửi địa chỉ đã ghép
+                address: fullAddress, // Gửi địa chỉ đã ghép về bot
                 image_note: image_note || "Gửi qua chat sau"
             };
 
             tg.sendData(JSON.stringify(data));
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 </body>
 </html>
