@@ -15,21 +15,21 @@
     </style>
 </head>
 <body>
-    <h3 style="text-align: center; margin-top: 0;">Điền thông tin nhận hàng</h3>
+    <h3 style="text-align: center; margin-top: 0;">Điền thông tin đơn hàng</h3>
     
     <div class="form-group">
-        <label>📦 Mã sản phẩm (VD: A01)</label>
-        <input type="text" id="code" placeholder="Nhập mã...">
+        <label>📦 Mã sản phẩm</label>
+        <input type="text" id="code" placeholder="Nhập mã (Nếu không có hãy ghi 0)">
     </div>
     
     <div class="form-group">
         <label>👕 Size / Màu sắc</label>
-        <input type="text" id="size" placeholder="VD: Size L, Màu đen...">
+        <input type="text" id="size" placeholder="Nhập size (Nếu không có hãy ghi 0)">
     </div>
 
     <div class="form-group">
-        <label>🏠 Địa chỉ + SĐT nhận hàng</label>
-        <textarea id="address" rows="3" placeholder="VD: 123 Đường A, Quận B, TP.HCM (0912...)"></textarea>
+        <label>🏠 Địa chỉ + SĐT</label>
+        <textarea id="address" rows="3" placeholder="Nhập địa chỉ (Nếu không có hãy ghi 0)"></textarea>
     </div>
     
     <div class="form-group">
@@ -44,18 +44,19 @@
         tg.expand(); 
 
         function sendData() {
-            let code = document.getElementById("code").value;
-            let size = document.getElementById("size").value;
-            let address = document.getElementById("address").value; // Lấy địa chỉ
+            // Lấy dữ liệu và xóa khoảng trắng thừa
+            let code = document.getElementById("code").value.trim();
+            let size = document.getElementById("size").value.trim();
+            let address = document.getElementById("address").value.trim();
             let quantity = document.getElementById("quantity").value;
 
-            // Kiểm tra xem đã điền đủ chưa
+            // KIỂM TRA: Nếu có ô nào để trống thì hiện thông báo yêu cầu ghi 0
             if(!code || !size || !address) {
-                tg.showAlert("Vui lòng điền đủ: Mã, Size và Địa chỉ!");
-                return;
+                tg.showAlert("Hãy ghi 0 nếu đơn hàng của bạn không có thông tin này!");
+                return; // Dừng lại, không gửi đơn
             }
 
-            // Gửi dữ liệu đi (gồm cả address)
+            // Nếu đã điền (kể cả điền số 0) thì gửi đi
             let data = JSON.stringify({ 
                 code: code, 
                 size: size, 
