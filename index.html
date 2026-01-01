@@ -4,255 +4,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đặt Voucher Shopee</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #fff);
-            color: var(--tg-theme-text-color, #000);
-            padding: 20px;
-            margin: 0;
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        h2 {
-            text-align: center;
-            color: var(--tg-theme-button-color, #3390ec);
+        .shopee-orange {
+            background-color: #ee4d2d;
         }
-        .form-group {
-            margin-bottom: 15px;
+        .shopee-text {
+            color: #ee4d2d;
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 14px;
+        .input-field {
+            @apply mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+            focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500;
         }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            color: var(--tg-theme-text-color, #000);
-            font-size: 16px;
-        }
-        select {
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px top 50%;
-            background-size: 12px auto;
-        }
-        input:focus, select:focus {
-            outline: 2px solid var(--tg-theme-button-color, #3390ec);
-        }
-        .btn-submit {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #fff);
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .note {
-            font-size: 12px;
-            color: #888;
-            margin-top: 5px;
-            text-align: center;
-        }
-        .required {
-            color: red;
-        }
-        .upload-hint {
-            font-size: 12px;
-            font-style: italic;
-            color: #555;
-            margin-top: 4px;
-        }
-        .address-container {
-            display: flex;
-            gap: 10px;
-            flex-direction: column;
+        .section-title {
+            @apply block text-sm font-medium text-gray-700 mb-1;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
 
-    <h2>📦 ĐƠN ĐẶT VOUCHER</h2>
+    <div class="max-w-md w-full space-y-6 bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#ee4d2d]">
+        
+        <!-- Header -->
+        <div class="text-center">
+            <h2 class="mt-2 text-2xl font-bold text-gray-900 uppercase">📦 Đơn Đặt Voucher</h2>
+            <p class="mt-1 text-sm text-gray-500">Điền thông tin bên dưới để lên đơn</p>
+        </div>
 
-    <div class="form-group">
-        <label>1. Link Sản Phẩm <span class="required">*</span></label>
-        <input type="text" id="link" placeholder="Dán link Shopee vào đây" required>
+        <form id="orderForm" class="space-y-4">
+            
+            <!-- 1. Link Sản Phẩm -->
+            <div>
+                <label for="productLink" class="section-title">1. Link Sản Phẩm <span class="text-red-500">*</span></label>
+                <div class="relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-link text-gray-400"></i>
+                    </div>
+                    <input type="url" id="productLink" required class="input-field pl-10" placeholder="https://shopee.vn/...">
+                </div>
+            </div>
+
+            <!-- 2. Tên Sản Phẩm -->
+            <div>
+                <label for="productName" class="section-title">2. Tên SP</label>
+                <div class="relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-tag text-gray-400"></i>
+                    </div>
+                    <input type="text" id="productName" class="input-field pl-10" placeholder="Ví dụ: Áo thun đen...">
+                </div>
+            </div>
+
+            <!-- 3. Phân loại -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="variant" class="section-title">3. Phân loại (Màu/Size)</label>
+                    <input type="text" id="variant" class="input-field" placeholder="Xanh, Size L">
+                </div>
+                <!-- 4. Số lượng -->
+                <div>
+                    <label for="quantity" class="section-title">4. Số lượng</label>
+                    <input type="number" id="quantity" value="1" min="1" class="input-field">
+                </div>
+            </div>
+
+            <!-- 5. Địa chỉ nhận hàng -->
+            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <label class="section-title text-orange-600 mb-2">5. Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
+                
+                <div class="space-y-2">
+                    <select id="province" class="input-field">
+                        <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                        <option value="Hà Nội">Hà Nội</option>
+                        <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                        <option value="Đà Nẵng">Đà Nẵng</option>
+                        <option value="Khác">Khác...</option>
+                    </select>
+                    
+                    <select id="district" class="input-field">
+                        <option value="">-- Chọn Quận/Huyện --</option>
+                        <!-- Dữ liệu mẫu -->
+                        <option value="Quận 1">Quận 1</option>
+                        <option value="Quận Cầu Giấy">Quận Cầu Giấy</option>
+                        <option value="Khác">Khác...</option>
+                    </select>
+
+                    <select id="ward" class="input-field">
+                        <option value="">-- Chọn Phường/Xã --</option>
+                         <!-- Dữ liệu mẫu -->
+                        <option value="Phường Bến Nghé">Phường Bến Nghé</option>
+                        <option value="Phường Dịch Vọng">Phường Dịch Vọng</option>
+                         <option value="Khác">Khác...</option>
+                    </select>
+
+                    <input type="text" id="addressDetail" required class="input-field" placeholder="Số nhà, tên đường cụ thể...">
+                </div>
+            </div>
+
+            <!-- 6. Ảnh đơn mẫu -->
+            <div>
+                <label for="imageLink" class="section-title">6. Ảnh đơn mẫu (Tùy chọn)</label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-orange-400 transition-colors bg-gray-50">
+                    <div class="space-y-1 text-center">
+                        <i class="fas fa-image text-4xl text-gray-400 mb-2"></i>
+                        <div class="flex text-sm text-gray-600">
+                            <input type="url" id="imageLink" class="input-field text-center" placeholder="Dán link ảnh vào đây (nếu có)">
+                        </div>
+                        <p class="text-xs text-gray-500">
+                            💡 Bạn có thể dán link hoặc gửi ảnh trực tiếp qua tin nhắn sau.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Ghi chú (MỚI THÊM) -->
+            <div>
+                <label for="note" class="section-title">7. Ghi chú</label>
+                <div class="relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 pt-2 pointer-events-none">
+                        <i class="fas fa-pen text-gray-400"></i>
+                    </div>
+                    <textarea id="note" rows="2" class="input-field pl-10" placeholder="Có thể ghi hoặc không (Ví dụ: Giao giờ hành chính...)"></textarea>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white shopee-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 shadow-md transition-all transform hover:scale-[1.02]">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <i class="fas fa-paper-plane group-hover:animate-bounce"></i>
+                    </span>
+                    GỬI ĐƠN HÀNG
+                </button>
+            </div>
+            
+            <p class="text-center text-xs text-gray-500 mt-4">
+                Vui lòng kiểm tra kỹ thông tin trước khi gửi.
+            </p>
+
+        </form>
     </div>
 
-    <div class="form-group">
-        <label>2. Số Điện Thoại <span class="required">*</span></label>
-        <input type="tel" id="phone" placeholder="Nhập SĐT nhận hàng" required>
-    </div>
-
-    <div class="form-group">
-        <label>3. Tên SP</label>
-        <input type="text" id="code" placeholder="Ví dụ: Áo thun...">
-    </div>
-
-    <div class="form-group">
-        <label>4. Phân loại (Màu/Size)</label>
-        <input type="text" id="size" placeholder="Ví dụ: Màu Đen, Size L">
-    </div>
-
-    <div class="form-group">
-        <label>5. Số lượng</label>
-        <input type="number" id="quantity" value="1" min="1">
-    </div>
-
-    <div class="form-group">
-        <label>6. Địa chỉ nhận hàng <span class="required">*</span></label>
-        <div class="address-container">
-            <select id="province" required>
-                <option value="">-- Chọn Tỉnh/Thành phố --</option>
-            </select>
-            <select id="district" disabled required>
-                <option value="">-- Chọn Quận/Huyện --</option>
-            </select>
-            <select id="ward" disabled required>
-                <option value="">-- Chọn Phường/Xã --</option>
-            </select>
-            <input type="text" id="house_number" placeholder="Số nhà, tên đường, thôn/xóm..." required>
+    <!-- Notification Modal (Hidden by default) -->
+    <div id="notification" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                <i class="fas fa-check text-green-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Thành công!</h3>
+            <p class="mt-2 text-sm text-gray-500">Đơn hàng của bạn đã được ghi nhận. Dữ liệu đã sẵn sàng để xử lý.</p>
+            <div class="mt-4">
+                <button onclick="closeModal()" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none sm:text-sm">
+                    Đóng
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="form-group">
-        <label>7. Ảnh đơn mẫu (Tùy chọn)</label>
-        <input type="text" id="image_note" placeholder="Dán link hoặc để trống...">
-        <div class="upload-hint">💡 Bạn có thể dán link vào đây hoặc để trống. Sau khi nhấn "Gửi đơn hàng", bạn có thể gửi Ảnh hoặc File trực tiếp qua tin nhắn cho Bot.</div>
-    </div>
-
-    <button class="btn-submit" onclick="sendData()">🚀 GỬI ĐƠN HÀNG</button>
-    <p class="note">Vui lòng kiểm tra kỹ thông tin trước khi gửi.</p>
-
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+        const form = document.getElementById('orderForm');
+        const modal = document.getElementById('notification');
 
-        // --- XỬ LÝ API ĐỊA CHỈ VIỆT NAM (Nguồn: esgoo.net - Dữ liệu 2024) ---
-        $(document).ready(function() {
-            // 1. Lấy danh sách Tỉnh/Thành phố
-            $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function(data_tinh) {
-                if (data_tinh.error == 0) {
-                    let row = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
-                    
-                    // Tách Hà Nội và TP HCM ra để đưa lên đầu
-                    let hanoi = data_tinh.data.find(x => x.id === "01");
-                    let hcm = data_tinh.data.find(x => x.id === "79");
-                    let others = data_tinh.data.filter(x => x.id !== "01" && x.id !== "79");
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-                    // Thêm Hà Nội và HCM vào đầu danh sách
-                    if (hanoi) row += `<option value="${hanoi.id}">${hanoi.full_name}</option>`;
-                    if (hcm) row += `<option value="${hcm.id}">${hcm.full_name}</option>`;
-                    
-                    // Thêm gạch ngăn cách (nếu cần)
-                    if (hanoi || hcm) row += '<option disabled>──────────</option>';
-
-                    // Thêm các tỉnh còn lại
-                    $.each(others, function(key, val) {
-                        row += `<option value="${val.id}">${val.full_name}</option>`;
-                    });
-                    
-                    $("#province").html(row);
-                }
-            });
-
-            // 2. Lấy danh sách Quận/Huyện khi chọn Tỉnh
-            $("#province").change(function() {
-                let idtinh = $(this).val();
-                
-                // Reset Quận/Huyện và Phường/Xã
-                $("#district").html('<option value="">-- Chọn Quận/Huyện --</option>').attr("disabled", true);
-                $("#ward").html('<option value="">-- Chọn Phường/Xã --</option>').attr("disabled", true);
-
-                if (idtinh) {
-                    $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function(data_quan) {
-                        if (data_quan.error == 0) {
-                            let row = '<option value="">-- Chọn Quận/Huyện --</option>';
-                            $.each(data_quan.data, function(key, val) {
-                                row += '<option value="' + val.id + '">' + val.full_name + '</option>';
-                            });
-                            $("#district").html(row).attr("disabled", false);
-                        }
-                    });
-                }
-            });
-
-            // 3. Lấy danh sách Phường/Xã khi chọn Quận
-            $("#district").change(function() {
-                let idquan = $(this).val();
-                
-                // Reset Phường/Xã
-                $("#ward").html('<option value="">-- Chọn Phường/Xã --</option>').attr("disabled", true);
-
-                if (idquan) {
-                    $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function(data_phuong) {
-                        if (data_phuong.error == 0) {
-                            let row = '<option value="">-- Chọn Phường/Xã --</option>';
-                            $.each(data_phuong.data, function(key, val) {
-                                row += '<option value="' + val.id + '">' + val.full_name + '</option>';
-                            });
-                            $("#ward").html(row).attr("disabled", false);
-                        }
-                    });
-                }
-            });
-        });
-
-        // --- GỬI DỮ LIỆU ---
-        function sendData() {
-            let link = $("#link").val().trim();
-            let phone = $("#phone").val().trim();
-            let code = $("#code").val().trim();
-            let size = $("#size").val().trim();
-            let quantity = $("#quantity").val();
-            let image_note = $("#image_note").val().trim();
-
-            // Lấy địa chỉ chi tiết
-            let house = $("#house_number").val().trim();
-            let provinceText = $("#province option:selected").text();
-            let districtText = $("#district option:selected").text();
-            let wardText = $("#ward option:selected").text();
-            
-            // Kiểm tra validate địa chỉ (Kiểm tra ID có được chọn không)
-            let provinceVal = $("#province").val();
-            let districtVal = $("#district").val();
-            let wardVal = $("#ward").val();
-
-            if (!link || !phone || !house || !provinceVal || !districtVal || !wardVal) {
-                tg.showPopup({
-                    title: "Thiếu thông tin",
-                    message: "Vui lòng nhập đầy đủ Link, SĐT và Địa chỉ chi tiết!",
-                    buttons: [{type: "ok"}]
-                });
-                return;
-            }
-
-            // Ghép địa chỉ thành chuỗi hoàn chỉnh
-            let fullAddress = `${house}, ${wardText}, ${districtText}, ${provinceText}`;
-
-            let data = {
-                link: link,
-                phone: phone,
-                code: code || "Không ghi",
-                size: size || "Ngẫu nhiên",
-                quantity: quantity,
-                address: fullAddress, // Gửi địa chỉ đã ghép về bot
-                image_note: image_note || "Gửi qua chat sau"
+            // Lấy dữ liệu từ form
+            const formData = {
+                link: document.getElementById('productLink').value,
+                productName: document.getElementById('productName').value,
+                variant: document.getElementById('variant').value,
+                quantity: document.getElementById('quantity').value,
+                address: {
+                    province: document.getElementById('province').value,
+                    district: document.getElementById('district').value,
+                    ward: document.getElementById('ward').value,
+                    detail: document.getElementById('addressDetail').value
+                },
+                imageLink: document.getElementById('imageLink').value,
+                note: document.getElementById('note').value // Dữ liệu ghi chú mới
             };
 
-            tg.sendData(JSON.stringify(data));
+            // LOGIC GỬI ĐI (Tùy chỉnh của bạn)
+            // Ví dụ: Gửi đến Telegram Bot API
+            console.log("Dữ liệu đơn hàng:", formData);
+
+            // Hiển thị thông báo thành công
+            modal.classList.remove('hidden');
+        });
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            // form.reset(); // Bỏ comment dòng này nếu muốn xóa trắng form sau khi gửi
         }
     </script>
 </body>
