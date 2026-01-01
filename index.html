@@ -62,15 +62,24 @@
             </div>
 
             <!-- 3. Phân loại -->
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label for="variant" class="section-title">3. Phân loại (Màu/Size)</label>
-                    <input type="text" id="variant" class="input-field" placeholder="Xanh, Size L">
+            <div>
+                <label for="variant" class="section-title">3. Phân loại (Màu/Size)</label>
+                <div class="relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-filter text-gray-400"></i>
+                    </div>
+                    <input type="text" id="variant" class="input-field pl-10" placeholder="Xanh, Size L">
                 </div>
-                <!-- 4. Số lượng -->
-                <div>
-                    <label for="quantity" class="section-title">4. Số lượng</label>
-                    <input type="number" id="quantity" value="1" min="1" class="input-field">
+            </div>
+
+            <!-- 4. Số lượng -->
+            <div>
+                <label for="quantity" class="section-title">4. Số lượng</label>
+                <div class="relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-sort-numeric-up text-gray-400"></i>
+                    </div>
+                    <input type="number" id="quantity" value="1" min="1" class="input-field pl-10">
                 </div>
             </div>
 
@@ -146,12 +155,19 @@
         const form = document.getElementById('orderForm');
         const modal = document.getElementById('notification');
         
+        // --- CẤU HÌNH TELEGRAM (BẠN PHẢI ĐIỀN VÀO ĐÂY) ---
+        // 1. Lấy Token từ @BotFather
+        const BOT_TOKEN = '8358668979:AAGj43bBi-0LPZi3u8WJF8D4tJ8X75lk_0Q'; 
+        // 2. Lấy Chat ID bằng cách chat với bot @userinfobot hoặc lấy ID nhóm
+        const CHAT_ID = '2115515516'; 
+        // ------------------------------------------------
+
         // Các biến chọn địa chỉ
         const provinceSelect = document.getElementById('province');
         const districtSelect = document.getElementById('district');
         const wardSelect = document.getElementById('ward');
 
-        // Hàm gọi API
+        // Hàm gọi API địa chính
         async function fetchLocations() {
             try {
                 // Lấy danh sách Tỉnh/Thành
@@ -235,34 +251,65 @@
         window.addEventListener('DOMContentLoaded', fetchLocations);
 
         // Xử lý gửi form
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            // Lấy tên hiển thị (text) thay vì value (id) cho địa chỉ
+            const btnSubmit = form.querySelector('button[type="submit"]');
+            const originalBtnText = btnSubmit.innerHTML;
+            
+            // Hiệu ứng đang gửi
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+            btnSubmit.disabled = true;
+
+            // Lấy tên hiển thị địa chỉ
             const provinceName = provinceSelect.options[provinceSelect.selectedIndex]?.text || "";
             const districtName = districtSelect.options[districtSelect.selectedIndex]?.text || "";
             const wardName = wardSelect.options[wardSelect.selectedIndex]?.text || "";
+            const detailAddress = document.getElementById('addressDetail').value;
 
-            // Lấy dữ liệu từ form
-            const formData = {
-                link: document.getElementById('productLink').value,
-                productName: document.getElementById('productName').value,
-                variant: document.getElementById('variant').value,
-                quantity: document.getElementById('quantity').value,
-                address: {
-                    province: provinceName,
-                    district: districtName,
-                    ward: wardName,
-                    detail: document.getElementById('addressDetail').value
-                },
-                note: document.getElementById('note').value 
-            };
+            // Soạn nội dung tin nhắn gửi Telegram
+            const message = `
+📦 *ĐƠN HÀNG MỚI*
+------------------
+🔗 *Link:* ${document.getElementById('productLink').value}
+🏷 *Tên SP:* ${document.getElementById('productName').value || "Không có"}
+🎨 *Phân loại:* ${document.getElementById('variant').value || "Không có"}
+🔢 *Số lượng:* ${document.getElementById('quantity').value}
+------------------
+📍 *Địa chỉ:*
+${detailAddress}, ${wardName}, ${districtName}, ${provinceName}
+------------------
+📝 *Ghi chú:* ${document.getElementById('note').value || "Không có"}
+            `;
 
-            // LOGIC GỬI ĐI (Tùy chỉnh của bạn)
-            console.log("Dữ liệu đơn hàng:", formData);
+            try {
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
 
-            // Hiển thị thông báo thành công
-            modal.classList.remove('hidden');
+                if (response.ok) {
+                    modal.classList.remove('hidden');
+                    // Reset form sau khi gửi thành công (tùy chọn)
+                    // form.reset(); 
+                } else {
+                    alert('Lỗi gửi tin nhắn: ' + response.statusText);
+                }
+            } catch (error) {
+                alert('Lỗi kết nối: ' + error.message);
+            } finally {
+                // Khôi phục nút bấm
+                btnSubmit.innerHTML = originalBtnText;
+                btnSubmit.disabled = false;
+            }
         });
 
         function closeModal() {
