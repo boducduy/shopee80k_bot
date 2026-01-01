@@ -2,206 +2,170 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đặt Voucher Shopee</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SDK Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: var(--tg-theme-bg-color, #fff1f2);
-            color: var(--tg-theme-text-color, #000000);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .shopee-orange {
-            background-color: #ee4d2d;
-        }
+        body { background-color: #fff1f2; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .shopee-orange { background-color: #ee4d2d; }
         .input-field {
             @apply mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
             focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500;
         }
-        .section-title {
-            @apply block text-sm font-medium text-gray-700 mb-1;
-        }
+        .section-title { @apply block text-sm font-medium text-gray-700 mb-1; }
     </style>
 </head>
-<body class="min-h-screen py-4 px-3">
-
-    <div class="max-w-md mx-auto space-y-4 bg-white p-5 rounded-xl shadow-lg border-t-4 border-[#ee4d2d]">
-        
+<body class="min-h-screen flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-6 bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#ee4d2d]">
         <div class="text-center">
-            <h2 class="text-xl font-bold text-gray-900 uppercase">📦 Lên Đơn Voucher</h2>
-            <p class="mt-1 text-xs text-gray-500">Nhập thông tin để Bot xử lý tự động</p>
+            <h2 class="mt-2 text-2xl font-bold text-gray-900 uppercase">📦 Đơn Đặt Shopee</h2>
+            <p class="mt-1 text-sm text-gray-500">Điền thông tin và nhấn Gửi</p>
         </div>
 
         <form id="orderForm" class="space-y-4">
-            
+            <!-- 1. Link -->
             <div>
                 <label class="section-title">1. Link Sản Phẩm <span class="text-red-500">*</span></label>
-                <input type="url" id="productLink" required class="input-field" placeholder="Dán link Shopee vào đây...">
+                <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-link text-gray-400"></i></div>
+                <input type="url" id="productLink" required class="input-field pl-10" placeholder="https://shopee.vn/..."></div>
             </div>
 
+            <!-- 2. Tên SP -->
             <div>
                 <label class="section-title">2. Tên SP</label>
-                <input type="text" id="productName" class="input-field" placeholder="Ví dụ: Áo thun đen...">
+                <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-tag text-gray-400"></i></div>
+                <input type="text" id="productName" class="input-field pl-10" placeholder="Ví dụ: Áo thun đen..."></div>
             </div>
 
+            <!-- 3. Phân loại -->
             <div>
                 <label class="section-title">3. Phân loại (Màu/Size)</label>
-                <input type="text" id="variant" class="input-field" placeholder="Xanh, Size L">
+                <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-filter text-gray-400"></i></div>
+                <input type="text" id="variant" class="input-field pl-10" placeholder="Xanh, Size L"></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="section-title">4. Giá gốc (đ)</label>
-                    <input type="text" id="price" class="input-field text-right" placeholder="0" oninput="formatCurrencyInput(this)">
-                </div>
-                <div>
-                    <label class="section-title">Số lượng</label>
-                    <input type="number" id="quantity" value="1" min="1" class="input-field text-center">
-                </div>
+            <!-- 4. Số lượng -->
+            <div>
+                <label class="section-title">4. Số lượng</label>
+                <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-sort-numeric-up text-gray-400"></i></div>
+                <input type="number" id="quantity" value="1" min="1" class="input-field pl-10 text-center font-bold"></div>
             </div>
 
+            <!-- 5. Địa chỉ -->
             <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
                 <label class="section-title text-orange-600 mb-2">5. Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
                 <div class="space-y-2">
-                    <select id="province" class="input-field" required></select>
-                    <select id="district" class="input-field" required disabled></select>
-                    <select id="ward" class="input-field" required disabled></select>
-                    <input type="text" id="addressDetail" required class="input-field" placeholder="Số nhà, tên đường...">
+                    <select id="province" class="input-field" required><option value="">Đang tải...</option></select>
+                    <select id="district" class="input-field" required disabled><option value="">-- Quận/Huyện --</option></select>
+                    <select id="ward" class="input-field" required disabled><option value="">-- Phường/Xã --</option></select>
+                    <input type="text" id="addressDetail" required class="input-field" placeholder="Số nhà, đường...">
                 </div>
             </div>
 
+            <!-- 6. Ghi chú -->
             <div>
                 <label class="section-title">6. Ghi chú</label>
                 <textarea id="note" rows="2" class="input-field" placeholder="Ghi chú thêm..."></textarea>
             </div>
+            
+            <!-- Tổng tiền (ĐÃ CHUYỂN XUỐNG DƯỚI) -->
+            <div class="bg-orange-50 p-3 rounded-md border border-orange-200 flex justify-between items-center mt-4">
+                <span class="text-gray-700 font-medium">Tổng thanh toán:</span>
+                <span id="totalAmount" class="text-xl font-bold text-[#ee4d2d]">0 đ</span>
+            </div>
 
-            <div class="pt-2"></div>
+            <button type="submit" class="w-full py-3 px-4 rounded-md text-white shopee-orange hover:bg-orange-600 shadow-md font-bold uppercase transition-transform transform hover:scale-[1.02]">
+                GỬI ĐƠN HÀNG NGAY
+            </button>
         </form>
     </div>
 
-    <div class="h-20"></div>
-
     <script>
-        // --- KHỞI TẠO TELEGRAM WEB APP ---
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Mở rộng full màn hình
+        tg.expand();
 
-        // Cấu hình nút chính (MainButton) của Telegram
-        tg.MainButton.text = "GỬI ĐƠN NGAY";
-        tg.MainButton.color = "#ee4d2d"; // Màu cam Shopee
-        tg.MainButton.textColor = "#ffffff";
-        tg.MainButton.show();
+        // --- NHẬN GIÁ TỪ URL BOT ---
+        const urlParams = new URLSearchParams(window.location.search);
+        // Lấy giá từ Bot gửi sang. Mặc định 0 nếu không có.
+        const adminPrice = parseInt(urlParams.get('price')) || 0;
 
-        // --- LOGIC XỬ LÝ FORM ---
-        const priceInput = document.getElementById('price');
-        
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        const quantityInput = document.getElementById('quantity');
+        const totalDisplay = document.getElementById('totalAmount');
+
+        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+
+        // Tính toán ban đầu
+        calculateTotal();
+
+        function calculateTotal() {
+            const quantity = parseInt(quantityInput.value) || 0;
+            const total = adminPrice * quantity;
+            totalDisplay.innerText = formatNumber(total) + " đ";
         }
+        quantityInput.addEventListener('input', calculateTotal);
 
-        function formatCurrencyInput(input) {
-            let value = input.value.replace(/\D/g, '');
-            input.value = formatNumber(value);
-        }
-
-        // --- API ĐỊA CHÍNH (Giữ nguyên logic của bạn) ---
+        // --- API ĐỊA CHÍNH ---
         const provinceSelect = document.getElementById('province');
         const districtSelect = document.getElementById('district');
         const wardSelect = document.getElementById('ward');
 
         async function fetchLocations() {
             try {
-                const response = await fetch('https://esgoo.net/api-tinhthanh/1/0.htm');
-                const data = await response.json();
-                if (data.error === 0) {
-                    provinceSelect.innerHTML = '<option value="">Tỉnh/Thành phố</option>';
-                    data.data.forEach(p => {
-                        const opt = document.createElement('option');
-                        opt.value = p.id;
-                        opt.textContent = p.full_name;
-                        provinceSelect.appendChild(opt);
-                    });
+                const res = await fetch('https://esgoo.net/api-tinhthanh/1/0.htm');
+                const data = await res.json();
+                if(data.error===0) {
+                    provinceSelect.innerHTML = '<option value="">-- Tỉnh/Thành --</option>';
+                    data.data.forEach(p => provinceSelect.add(new Option(p.full_name, p.id)));
                 }
-            } catch (e) {}
+            } catch(e){}
         }
+        
+        provinceSelect.onchange = async function() {
+            districtSelect.innerHTML='<option>Đang tải...</option>';
+            const res = await fetch(`https://esgoo.net/api-tinhthanh/2/${this.value}.htm`);
+            const d = await res.json();
+            districtSelect.innerHTML='<option value="">-- Quận/Huyện --</option>';
+            d.data.forEach(x => districtSelect.add(new Option(x.full_name, x.id)));
+            districtSelect.disabled=false;
+        };
 
-        provinceSelect.addEventListener('change', async function() {
-            const id = this.value;
-            districtSelect.innerHTML = '<option value="">Quận/Huyện</option>';
-            wardSelect.innerHTML = '<option value="">Phường/Xã</option>';
-            districtSelect.disabled = true; wardSelect.disabled = true;
-            if(id){
-                const res = await fetch(`https://esgoo.net/api-tinhthanh/2/${id}.htm`);
-                const d = await res.json();
-                if(d.error===0){
-                    d.data.forEach(x => {
-                        const opt = document.createElement('option');
-                        opt.value = x.id; opt.textContent = x.full_name;
-                        districtSelect.appendChild(opt);
-                    });
-                    districtSelect.disabled=false;
-                }
-            }
-        });
+        districtSelect.onchange = async function() {
+            wardSelect.innerHTML='<option>Đang tải...</option>';
+            const res = await fetch(`https://esgoo.net/api-tinhthanh/3/${this.value}.htm`);
+            const d = await res.json();
+            wardSelect.innerHTML='<option value="">-- Phường/Xã --</option>';
+            d.data.forEach(x => wardSelect.add(new Option(x.full_name, x.id)));
+            wardSelect.disabled=false;
+        };
+        
+        window.onload = fetchLocations;
 
-        districtSelect.addEventListener('change', async function() {
-            const id = this.value;
-            wardSelect.innerHTML = '<option value="">Phường/Xã</option>';
-            wardSelect.disabled = true;
-            if(id){
-                const res = await fetch(`https://esgoo.net/api-tinhthanh/3/${id}.htm`);
-                const d = await res.json();
-                if(d.error===0){
-                    d.data.forEach(x => {
-                        const opt = document.createElement('option');
-                        opt.value = x.id; opt.textContent = x.full_name;
-                        wardSelect.appendChild(opt);
-                    });
-                    wardSelect.disabled=false;
-                }
-            }
-        });
+        // XỬ LÝ GỬI DỮ LIỆU
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-        window.addEventListener('DOMContentLoaded', fetchLocations);
+            const pName = provinceSelect.options[provinceSelect.selectedIndex]?.text || "";
+            const dName = districtSelect.options[districtSelect.selectedIndex]?.text || "";
+            const wName = wardSelect.options[wardSelect.selectedIndex]?.text || "";
+            const fullAddress = `${document.getElementById('addressDetail').value}, ${wName}, ${dName}, ${pName}`;
 
-        // --- GỬI DỮ LIỆU VỀ BOT ---
-        Telegram.WebApp.onEvent('mainButtonClicked', function(){
-            // Validate dữ liệu
-            const link = document.getElementById('productLink').value;
-            const pName = provinceSelect.options[provinceSelect.selectedIndex]?.text;
-            const dName = districtSelect.options[districtSelect.selectedIndex]?.text;
-            const wName = wardSelect.options[wardSelect.selectedIndex]?.text;
-            const detail = document.getElementById('addressDetail').value;
-
-            if(!link || !detail || provinceSelect.value == "" || districtSelect.value == "" || wardSelect.value == "") {
-                tg.showAlert("Vui lòng điền đầy đủ Link và Địa chỉ!");
-                return;
-            }
-
-            const productName = document.getElementById('productName').value || "Không tên";
-            const variant = document.getElementById('variant').value || "Ngẫu nhiên";
-            const note = document.getElementById('note').value || "";
-            
-            // Tạo chuỗi địa chỉ đầy đủ
-            const fullAddress = `${detail}, ${wName}, ${dName}, ${pName}`;
-            
-            // Tạo object dữ liệu để gửi về Python
-            // Cấu trúc này khớp với logic bot Python: data.get('code'), data.get('link')...
-            const dataToSend = {
-                link: link,
-                code: `${productName} (${variant})`, // Gộp tên và phân loại vào code
+            // Tạo dữ liệu gửi về Bot
+            const data = {
+                link: document.getElementById('productLink').value,
+                code: document.getElementById('productName').value,
+                variant: document.getElementById('variant').value,
                 quantity: document.getElementById('quantity').value,
-                price_original: priceInput.value, // Gửi để tham khảo (Bot tự tính giá config)
+                price: formatNumber(adminPrice), // Gửi kèm giá (ẩn) để Bot báo cáo
+                total: totalDisplay.innerText,
                 address: fullAddress,
-                note: note
+                note: document.getElementById('note').value
             };
 
-            // Gửi dữ liệu về Bot
-            tg.sendData(JSON.stringify(dataToSend));
+            tg.sendData(JSON.stringify(data));
         });
-
     </script>
 </body>
 </html>
