@@ -8,7 +8,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f3f4f6;
+            /* Đổi màu nền sang tông hồng/cam nhẹ dịu mắt hơn */
+            background-color: #fff1f2; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .shopee-orange {
@@ -106,25 +107,11 @@
                 </div>
             </div>
 
-            <!-- 6. Ảnh đơn mẫu -->
-            <div>
-                <label for="imageLink" class="section-title">6. Ảnh đơn mẫu (Tùy chọn)</label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-orange-400 transition-colors bg-gray-50">
-                    <div class="space-y-1 text-center">
-                        <i class="fas fa-image text-4xl text-gray-400 mb-2"></i>
-                        <div class="flex text-sm text-gray-600">
-                            <input type="url" id="imageLink" class="input-field text-center" placeholder="Dán link ảnh vào đây (nếu có)">
-                        </div>
-                        <p class="text-xs text-gray-500">
-                            💡 Bạn có thể dán link hoặc gửi ảnh trực tiếp qua tin nhắn sau.
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <!-- MỤC 6 CŨ ĐÃ BỊ XÓA -->
 
-            <!-- 7. Ghi chú (MỚI THÊM) -->
+            <!-- 6. Ghi chú (Đã đổi số thứ tự từ 7 thành 6) -->
             <div>
-                <label for="note" class="section-title">7. Ghi chú</label>
+                <label for="note" class="section-title">6. Ghi chú</label>
                 <div class="relative rounded-md shadow-sm">
                     <div class="absolute inset-y-0 left-0 pl-3 pt-2 pointer-events-none">
                         <i class="fas fa-pen text-gray-400"></i>
@@ -185,8 +172,8 @@
                     ward: document.getElementById('ward').value,
                     detail: document.getElementById('addressDetail').value
                 },
-                imageLink: document.getElementById('imageLink').value,
-                note: document.getElementById('note').value // Dữ liệu ghi chú mới
+                // Đã xóa trường imageLink
+                note: document.getElementById('note').value 
             };
 
             // LOGIC GỬI ĐI (Tùy chỉnh của bạn)
