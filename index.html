@@ -12,7 +12,7 @@
         body { background-color: #fff1f2; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .shopee-orange { background-color: #ee4d2d; }
         .input-field {
-            @apply mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+            @apply mt-1 block w-full px-3 py-3 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
             focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500;
         }
         .section-title { @apply block text-sm font-medium text-gray-700 mb-1; }
@@ -54,14 +54,32 @@
                 <input type="number" id="quantity" value="1" min="1" class="input-field pl-10 text-center font-bold"></div>
             </div>
 
-            <!-- 5. Địa chỉ -->
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <label class="section-title text-orange-600 mb-2">5. Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
-                <div class="space-y-2">
-                    <select id="province" class="input-field" required><option value="">Đang tải...</option></select>
-                    <select id="district" class="input-field" required disabled><option value="">-- Quận/Huyện --</option></select>
-                    <select id="ward" class="input-field" required disabled><option value="">-- Phường/Xã --</option></select>
-                    <input type="text" id="addressDetail" required class="input-field" placeholder="Số nhà, đường...">
+            <!-- 5. Địa chỉ (Đã sửa: Mỗi ô 1 dòng tách biệt) -->
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <label class="section-title text-orange-600 mb-3">5. Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
+                
+                <div class="space-y-3"> <!-- Tăng khoảng cách giữa các ô -->
+                    <div>
+                        <select id="province" class="input-field" required>
+                            <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="district" class="input-field" required disabled>
+                            <option value="">-- Chọn Quận/Huyện --</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="ward" class="input-field" required disabled>
+                            <option value="">-- Chọn Phường/Xã --</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <input type="text" id="addressDetail" required class="input-field" placeholder="Số nhà, tên đường cụ thể...">
+                    </div>
                 </div>
             </div>
 
@@ -71,7 +89,7 @@
                 <textarea id="note" rows="2" class="input-field" placeholder="Ghi chú thêm..."></textarea>
             </div>
             
-            <!-- Tổng tiền (ĐÃ CHUYỂN XUỐNG DƯỚI) -->
+            <!-- Tổng tiền -->
             <div class="bg-orange-50 p-3 rounded-md border border-orange-200 flex justify-between items-center mt-4">
                 <span class="text-gray-700 font-medium">Tổng thanh toán:</span>
                 <span id="totalAmount" class="text-xl font-bold text-[#ee4d2d]">0 đ</span>
@@ -89,7 +107,6 @@
 
         // --- NHẬN GIÁ TỪ URL BOT ---
         const urlParams = new URLSearchParams(window.location.search);
-        // Lấy giá từ Bot gửi sang. Mặc định 0 nếu không có.
         const adminPrice = parseInt(urlParams.get('price')) || 0;
 
         const quantityInput = document.getElementById('quantity');
@@ -97,7 +114,6 @@
 
         function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
 
-        // Tính toán ban đầu
         calculateTotal();
 
         function calculateTotal() {
@@ -117,7 +133,7 @@
                 const res = await fetch('https://esgoo.net/api-tinhthanh/1/0.htm');
                 const data = await res.json();
                 if(data.error===0) {
-                    provinceSelect.innerHTML = '<option value="">-- Tỉnh/Thành --</option>';
+                    provinceSelect.innerHTML = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
                     data.data.forEach(p => provinceSelect.add(new Option(p.full_name, p.id)));
                 }
             } catch(e){}
@@ -125,9 +141,12 @@
         
         provinceSelect.onchange = async function() {
             districtSelect.innerHTML='<option>Đang tải...</option>';
+            wardSelect.innerHTML='<option value="">-- Chọn Phường/Xã --</option>'; // Reset xã khi đổi tỉnh
+            wardSelect.disabled=true;
+            
             const res = await fetch(`https://esgoo.net/api-tinhthanh/2/${this.value}.htm`);
             const d = await res.json();
-            districtSelect.innerHTML='<option value="">-- Quận/Huyện --</option>';
+            districtSelect.innerHTML='<option value="">-- Chọn Quận/Huyện --</option>';
             d.data.forEach(x => districtSelect.add(new Option(x.full_name, x.id)));
             districtSelect.disabled=false;
         };
@@ -136,7 +155,7 @@
             wardSelect.innerHTML='<option>Đang tải...</option>';
             const res = await fetch(`https://esgoo.net/api-tinhthanh/3/${this.value}.htm`);
             const d = await res.json();
-            wardSelect.innerHTML='<option value="">-- Phường/Xã --</option>';
+            wardSelect.innerHTML='<option value="">-- Chọn Phường/Xã --</option>';
             d.data.forEach(x => wardSelect.add(new Option(x.full_name, x.id)));
             wardSelect.disabled=false;
         };
@@ -152,13 +171,12 @@
             const wName = wardSelect.options[wardSelect.selectedIndex]?.text || "";
             const fullAddress = `${document.getElementById('addressDetail').value}, ${wName}, ${dName}, ${pName}`;
 
-            // Tạo dữ liệu gửi về Bot
             const data = {
                 link: document.getElementById('productLink').value,
                 code: document.getElementById('productName').value,
                 variant: document.getElementById('variant').value,
                 quantity: document.getElementById('quantity').value,
-                price: formatNumber(adminPrice), // Gửi kèm giá (ẩn) để Bot báo cáo
+                price: formatNumber(adminPrice),
                 total: totalDisplay.innerText,
                 address: fullAddress,
                 note: document.getElementById('note').value
