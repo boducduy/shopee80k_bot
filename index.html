@@ -54,11 +54,11 @@
                 <input type="number" id="quantity" value="1" min="1" class="input-field pl-10 text-center font-bold"></div>
             </div>
 
-            <!-- 5. Địa chỉ (Đã sửa: Mỗi ô 1 dòng tách biệt) -->
+            <!-- 5. Địa chỉ (Mỗi ô 1 dòng tách biệt) -->
             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <label class="section-title text-orange-600 mb-3">5. Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
                 
-                <div class="space-y-3"> <!-- Tăng khoảng cách giữa các ô -->
+                <div class="space-y-4"> <!-- Khoảng cách giữa các ô -->
                     <div>
                         <select id="province" class="input-field" required>
                             <option value="">-- Chọn Tỉnh/Thành phố --</option>
@@ -89,12 +89,6 @@
                 <textarea id="note" rows="2" class="input-field" placeholder="Ghi chú thêm..."></textarea>
             </div>
             
-            <!-- Tổng tiền -->
-            <div class="bg-orange-50 p-3 rounded-md border border-orange-200 flex justify-between items-center mt-4">
-                <span class="text-gray-700 font-medium">Tổng thanh toán:</span>
-                <span id="totalAmount" class="text-xl font-bold text-[#ee4d2d]">0 đ</span>
-            </div>
-
             <button type="submit" class="w-full py-3 px-4 rounded-md text-white shopee-orange hover:bg-orange-600 shadow-md font-bold uppercase transition-transform transform hover:scale-[1.02]">
                 GỬI ĐƠN HÀNG NGAY
             </button>
@@ -104,24 +98,6 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-
-        // --- NHẬN GIÁ TỪ URL BOT ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const adminPrice = parseInt(urlParams.get('price')) || 0;
-
-        const quantityInput = document.getElementById('quantity');
-        const totalDisplay = document.getElementById('totalAmount');
-
-        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-
-        calculateTotal();
-
-        function calculateTotal() {
-            const quantity = parseInt(quantityInput.value) || 0;
-            const total = adminPrice * quantity;
-            totalDisplay.innerText = formatNumber(total) + " đ";
-        }
-        quantityInput.addEventListener('input', calculateTotal);
 
         // --- API ĐỊA CHÍNH ---
         const provinceSelect = document.getElementById('province');
@@ -141,7 +117,7 @@
         
         provinceSelect.onchange = async function() {
             districtSelect.innerHTML='<option>Đang tải...</option>';
-            wardSelect.innerHTML='<option value="">-- Chọn Phường/Xã --</option>'; // Reset xã khi đổi tỉnh
+            wardSelect.innerHTML='<option value="">-- Chọn Phường/Xã --</option>';
             wardSelect.disabled=true;
             
             const res = await fetch(`https://esgoo.net/api-tinhthanh/2/${this.value}.htm`);
@@ -176,10 +152,10 @@
                 code: document.getElementById('productName').value,
                 variant: document.getElementById('variant').value,
                 quantity: document.getElementById('quantity').value,
-                price: formatNumber(adminPrice),
-                total: totalDisplay.innerText,
                 address: fullAddress,
-                note: document.getElementById('note').value
+                note: document.getElementById('note').value,
+                price: "---", // Giữ chỗ để Bot không lỗi key
+                total: "---"  // Giữ chỗ để Bot không lỗi key
             };
 
             tg.sendData(JSON.stringify(data));
