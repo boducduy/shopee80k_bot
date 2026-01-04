@@ -40,19 +40,21 @@
 
             <!-- 2. Tên người nhận (Tùy chọn) -->
             <div>
-                <label class="section-title">2. Tên người nhận <span class="text-gray-400 font-normal">(Tùy chọn)</span></label>
+                <label class="section-title">2. Tên người nhận <span class="text-gray-400 font-normal">(KHÔNG GI MÌNH ĐỂ NGẪU NHIÊN)</span></label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-user text-gray-400"></i></div>
-                    <input type="text" id="receiverName" class="input-field pl-10" placeholder="KHÔNGQUENSHIPMỚIGHI">
+                    <!-- Không có required -> Có thể bỏ qua -->
+                    <input type="text" id="receiverName" class="input-field pl-10" placeholder="Ví dụ: Nguyễn Văn A (Có thể bỏ qua)">
                 </div>
             </div>
 
             <!-- 3. Số điện thoại (Tùy chọn) -->
             <div>
-                <label class="section-title">3. Số điện thoại <span class="text-gray-400 font-normal">(Tùy chọn)</span></label>
+                <label class="section-title">3. Số điện thoại <span class="text-gray-400 font-normal">(KHÔNG QUEN SHIP MỚI GHI Ạ)</span></label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-phone text-gray-400"></i></div>
-                    <input type="tel" id="phoneNumber" class="input-field pl-10" placeholder="KHÔNGQUENSHIPMỚIGHI" pattern="[0-9]{10,11}">
+                    <!-- Không có required và bỏ pattern để không bắt lỗi khi để trống -->
+                    <input type="tel" id="phoneNumber" class="input-field pl-10" placeholder="AI KHÔNG QUEN SHIP MỚI GHI">
                 </div>
             </div>
 
@@ -63,9 +65,9 @@
                 <input type="text" id="productName" class="input-field pl-10" placeholder="Ví dụ: Áo thun đen..."></div>
             </div>
 
-            <!-- 5. Phân loại (ĐÃ SỬA: BẮT BUỘC) -->
+            <!-- 5. Phân loại (Bắt buộc) -->
             <div>
-                <label class="section-title">5. Phân loại (Màu/Size/Ghi đầy đủ ) <span class="text-red-500">*</span></label>
+                <label class="section-title">5. Phân loại (Màu/Size) <span class="text-red-500">*</span></label>
                 <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-filter text-gray-400"></i></div>
                 <input type="text" id="variant" required class="input-field pl-10" placeholder="Xanh, Size L"></div>
             </div>
@@ -77,13 +79,13 @@
                 <input type="number" id="quantity" value="1" min="1" class="input-field pl-10 text-center font-bold"></div>
             </div>
 
-            <!-- 7. Ghi chú (Đã đổi lên vị trí số 7) -->
+            <!-- 7. Ghi chú -->
             <div>
                 <label class="section-title">7. Ghi chú</label>
                 <textarea id="note" rows="2" class="input-field" placeholder="CẦN GÌ THÌ NOTE Ạ"></textarea>
             </div>
 
-            <!-- 8. Địa chỉ (Đã đổi xuống vị trí số 8) -->
+            <!-- 8. Địa chỉ -->
             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <label class="section-title text-orange-600 mb-3">8. Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
                 
@@ -125,8 +127,6 @@
 
         // --- NHẬN DỮ LIỆU TỪ BOT ---
         const urlParams = new URLSearchParams(window.location.search);
-        
-        // Nhận phí dịch vụ (mặc định 25000 nếu không có)
         const adminFee = parseInt(urlParams.get('fee')) || 25000;
 
         function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
