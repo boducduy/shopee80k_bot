@@ -16,10 +16,15 @@
             focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500;
         }
         .section-title { @apply block text-sm font-medium text-gray-700 mb-1; }
+        input:read-only {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-6 bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#ee4d2d]">
+    <div class="max-w-lg w-full space-y-6 bg-white p-6 rounded-xl shadow-lg border-t-4 border-[#ee4d2d]">
         <div class="text-center">
             <h2 class="mt-2 text-2xl font-bold text-gray-900 uppercase">📦 Đơn Đặt Shopee</h2>
             <p class="mt-1 text-sm text-gray-500">Điền thông tin và nhấn Gửi</p>
@@ -33,32 +38,56 @@
                 <input type="url" id="productLink" required class="input-field pl-10" placeholder="https://shopee.vn/..."></div>
             </div>
 
-            <!-- 2. Tên SP -->
+            <!-- 2. Tên người nhận (Tùy chọn) -->
             <div>
-                <label class="section-title">2. Tên SP</label>
+                <label class="section-title">2. Tên người nhận <span class="text-gray-400 font-normal">(Tùy chọn)</span></label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-user text-gray-400"></i></div>
+                    <input type="text" id="receiverName" class="input-field pl-10" placeholder="KHÔNGQUENSHIPMỚIGHI">
+                </div>
+            </div>
+
+            <!-- 3. Số điện thoại (Tùy chọn) -->
+            <div>
+                <label class="section-title">3. Số điện thoại <span class="text-gray-400 font-normal">(Tùy chọn)</span></label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-phone text-gray-400"></i></div>
+                    <input type="tel" id="phoneNumber" class="input-field pl-10" placeholder="KHÔNGQUENSHIPMỚIGHI" pattern="[0-9]{10,11}">
+                </div>
+            </div>
+
+            <!-- 4. Tên SP -->
+            <div>
+                <label class="section-title">4. Tên SP</label>
                 <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-tag text-gray-400"></i></div>
                 <input type="text" id="productName" class="input-field pl-10" placeholder="Ví dụ: Áo thun đen..."></div>
             </div>
 
-            <!-- 3. Phân loại -->
+            <!-- 5. Phân loại (ĐÃ SỬA: BẮT BUỘC) -->
             <div>
-                <label class="section-title">3. Phân loại (Màu/Size)</label>
+                <label class="section-title">5. Phân loại (Màu/Size/Ghi đầy đủ ) <span class="text-red-500">*</span></label>
                 <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-filter text-gray-400"></i></div>
-                <input type="text" id="variant" class="input-field pl-10" placeholder="Xanh, Size L"></div>
+                <input type="text" id="variant" required class="input-field pl-10" placeholder="Xanh, Size L"></div>
             </div>
 
-            <!-- 4. Số lượng -->
+            <!-- 6. Số lượng -->
             <div>
-                <label class="section-title">4. Số lượng</label>
+                <label class="section-title">6. Số lượng</label>
                 <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-sort-numeric-up text-gray-400"></i></div>
                 <input type="number" id="quantity" value="1" min="1" class="input-field pl-10 text-center font-bold"></div>
             </div>
 
-            <!-- 5. Địa chỉ (Mỗi ô 1 dòng tách biệt) -->
+            <!-- 7. Ghi chú (Đã đổi lên vị trí số 7) -->
+            <div>
+                <label class="section-title">7. Ghi chú</label>
+                <textarea id="note" rows="2" class="input-field" placeholder="CẦN GÌ THÌ NOTE Ạ"></textarea>
+            </div>
+
+            <!-- 8. Địa chỉ (Đã đổi xuống vị trí số 8) -->
             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <label class="section-title text-orange-600 mb-3">5. Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
+                <label class="section-title text-orange-600 mb-3">8. Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
                 
-                <div class="space-y-4"> <!-- Khoảng cách giữa các ô -->
+                <div class="space-y-4">
                     <div>
                         <select id="province" class="input-field" required>
                             <option value="">-- Chọn Tỉnh/Thành phố --</option>
@@ -82,14 +111,9 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 6. Ghi chú -->
-            <div>
-                <label class="section-title">6. Ghi chú</label>
-                <textarea id="note" rows="2" class="input-field" placeholder="Ghi chú thêm..."></textarea>
-            </div>
             
-            <button type="submit" class="w-full py-3 px-4 rounded-md text-white shopee-orange hover:bg-orange-600 shadow-md font-bold uppercase transition-transform transform hover:scale-[1.02]">
+            <!-- NÚT GỬI ĐƠN HÀNG -->
+            <button type="submit" id="submitBtn" class="w-full py-3 px-4 rounded-md text-white shopee-orange hover:bg-orange-600 shadow-md font-bold uppercase transition-transform transform hover:scale-[1.02]">
                 GỬI ĐƠN HÀNG NGAY
             </button>
         </form>
@@ -98,6 +122,18 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        // --- NHẬN DỮ LIỆU TỪ BOT ---
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Nhận phí dịch vụ (mặc định 25000 nếu không có)
+        const adminFee = parseInt(urlParams.get('fee')) || 25000;
+
+        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+
+        // --- CẬP NHẬT NÚT GỬI ---
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.innerHTML = `GỬI ĐƠN HÀNG NGAY - ${formatNumber(adminFee)} đ`;
 
         // --- API ĐỊA CHÍNH ---
         const provinceSelect = document.getElementById('province');
@@ -149,13 +185,15 @@
 
             const data = {
                 link: document.getElementById('productLink').value,
+                receiver_name: document.getElementById('receiverName').value || "---",
+                phone: document.getElementById('phoneNumber').value || "---",
                 code: document.getElementById('productName').value,
                 variant: document.getElementById('variant').value,
                 quantity: document.getElementById('quantity').value,
                 address: fullAddress,
                 note: document.getElementById('note').value,
-                price: "---", // Giữ chỗ để Bot không lỗi key
-                total: "---"  // Giữ chỗ để Bot không lỗi key
+                price: "---", // Bot sẽ tự tính
+                total: "---"  // Bot sẽ tự tính
             };
 
             tg.sendData(JSON.stringify(data));
