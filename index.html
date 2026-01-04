@@ -9,7 +9,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #fff1f2; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { 
+            /* Đổi màu nền sang xám ấm nhẹ (Warm Gray) dịu mắt hơn */
+            background-color: #f5f5f4; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
         .shopee-orange { background-color: #ee4d2d; }
         .input-field {
             @apply mt-1 block w-full px-3 py-3 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
@@ -34,55 +38,65 @@
             <!-- 1. Link -->
             <div>
                 <label class="section-title">1. Link Sản Phẩm <span class="text-red-500">*</span></label>
-                <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-link text-gray-400"></i></div>
-                <input type="url" id="productLink" required class="input-field pl-10" placeholder="https://shopee.vn/..."></div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-link text-gray-400"></i></div>
+                    <input type="url" id="productLink" required class="input-field pl-10" placeholder="https://shopee.vn/...">
+                </div>
             </div>
 
             <!-- 2. Tên người nhận (Tùy chọn) -->
             <div>
-                <label class="section-title">2. Tên người nhận <span class="text-gray-400 font-normal">(KHÔNG GI MÌNH ĐỂ NGẪU NHIÊN)</span></label>
+                <label class="section-title">2. Tên người nhận <span class="text-gray-400 font-normal">(Tùy chọn)</span></label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-user text-gray-400"></i></div>
-                    <!-- Không có required -> Có thể bỏ qua -->
-                    <input type="text" id="receiverName" class="input-field pl-10" placeholder="Ví dụ: Nguyễn Văn A (Có thể bỏ qua)">
+                    <input type="text" id="receiverName" class="input-field pl-10" placeholder="CÓ THỂ BỎ QUA">
                 </div>
             </div>
 
             <!-- 3. Số điện thoại (Tùy chọn) -->
             <div>
-                <label class="section-title">3. Số điện thoại <span class="text-gray-400 font-normal">(KHÔNG QUEN SHIP MỚI GHI Ạ)</span></label>
+                <label class="section-title">3. Số điện thoại <span class="text-gray-400 font-normal">(KHÔNG QUEN SHIP THÌ GHI)</span></label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-phone text-gray-400"></i></div>
-                    <!-- Không có required và bỏ pattern để không bắt lỗi khi để trống -->
-                    <input type="tel" id="phoneNumber" class="input-field pl-10" placeholder="AI KHÔNG QUEN SHIP MỚI GHI">
+                    <input type="tel" id="phoneNumber" class="input-field pl-10" placeholder="CÓ THỂ BỎ QUA">
                 </div>
             </div>
 
             <!-- 4. Tên SP -->
             <div>
                 <label class="section-title">4. Tên SP</label>
-                <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-tag text-gray-400"></i></div>
-                <input type="text" id="productName" class="input-field pl-10" placeholder="Ví dụ: Áo thun đen..."></div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-tag text-gray-400"></i></div>
+                    <input type="text" id="productName" class="input-field pl-10" placeholder="Ví dụ: Áo thun đen...">
+                </div>
             </div>
 
-            <!-- 5. Phân loại (Bắt buộc) -->
+            <!-- 5. Phân loại -->
             <div>
                 <label class="section-title">5. Phân loại (Màu/Size) <span class="text-red-500">*</span></label>
-                <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-filter text-gray-400"></i></div>
-                <input type="text" id="variant" required class="input-field pl-10" placeholder="Xanh, Size L"></div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-filter text-gray-400"></i></div>
+                    <input type="text" id="variant" required class="input-field pl-10" placeholder="Xanh, Size L">
+                </div>
             </div>
 
             <!-- 6. Số lượng -->
             <div>
                 <label class="section-title">6. Số lượng</label>
-                <div class="relative"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-sort-numeric-up text-gray-400"></i></div>
-                <input type="number" id="quantity" value="1" min="1" class="input-field pl-10 text-center font-bold"></div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-sort-numeric-up text-gray-400"></i></div>
+                    <input type="number" id="quantity" value="1" min="1" class="input-field pl-10 text-center font-bold">
+                </div>
             </div>
 
-            <!-- 7. Ghi chú -->
+            <!-- 7. Ghi chú (ĐÃ CĂN CHỈNH CHO CÂN) -->
             <div>
                 <label class="section-title">7. Ghi chú</label>
-                <textarea id="note" rows="2" class="input-field" placeholder="CẦN GÌ THÌ NOTE Ạ"></textarea>
+                <div class="relative">
+                    <!-- Thêm icon cây bút và căn chỉnh padding để giống các ô trên -->
+                    <div class="absolute top-3 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-pen text-gray-400"></i></div>
+                    <textarea id="note" rows="2" class="input-field pl-10" placeholder="CẦN GÌ THÌ NOTE Ạ"></textarea>
+                </div>
             </div>
 
             <!-- 8. Địa chỉ -->
