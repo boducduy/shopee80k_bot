@@ -47,18 +47,24 @@
 
         <form id="orderForm" class="p-6 space-y-6">
             
-            <!-- 1. Link Sản Phẩm -->
+            <!-- 1. Link Sản Phẩm (Đã thêm chức năng nhiều link) -->
             <div>
                 <label class="section-title">1. Link Sản Phẩm <span class="text-red-500">*</span></label>
-                <div class="relative">
-                    <div class="input-icon"><i class="fas fa-link"></i></div>
-                    <input type="url" id="productLink" required class="input-field pl-12" placeholder="Dán link Shopee vào đây...">
+                <div id="linkContainer">
+                    <div class="relative mb-2">
+                        <div class="input-icon"><i class="fas fa-link"></i></div>
+                        <input type="url" name="productLink" required class="input-field pl-12" placeholder="Dán link Shopee vào đây...">
+                    </div>
                 </div>
+                <!-- Nút thêm link -->
+                <button type="button" id="addLinkBtn" class="text-sm text-orange-600 font-semibold hover:text-orange-800 focus:outline-none flex items-center mt-2">
+                    <i class="fas fa-plus-circle mr-1"></i> Thêm link khác
+                </button>
             </div>
 
-            <!-- 2. Số điện thoại (Đã xóa Tên người nhận, đưa SĐT lên mục 2) -->
+            <!-- 2. Số điện thoại -->
             <div>
-                <label class="section-title">2.Tên+Số điện thoại <span class="text-gray-400 font-normal text-sm">(có thể bỏ qua)</span></label>
+                <label class="section-title">2. Số điện thoại <span class="text-gray-400 font-normal text-sm">(có thể bỏ qua)</span></label>
                 <div class="relative">
                     <div class="input-icon"><i class="fas fa-phone"></i></div>
                     <input type="tel" id="phoneNumber" class="input-field pl-12" placeholder="QUEN SHIP BỎ QUA">
@@ -143,6 +149,21 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // --- XỬ LÝ THÊM LINK ---
+        document.getElementById('addLinkBtn').addEventListener('click', function() {
+            const container = document.getElementById('linkContainer');
+            const div = document.createElement('div');
+            div.className = 'relative mb-2 fade-in'; // Thêm animation nếu muốn
+            div.innerHTML = `
+                <div class="input-icon"><i class="fas fa-link"></i></div>
+                <input type="url" name="productLink" class="input-field pl-12" placeholder="Dán thêm link Shopee...">
+                <button type="button" class="absolute right-3 top-3 text-gray-400 hover:text-red-500" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(div);
+        });
+
         // --- NHẬN DỮ LIỆU TỪ BOT ---
         const urlParams = new URLSearchParams(window.location.search);
         const adminFee = parseInt(urlParams.get('fee')) || 25000;
@@ -203,14 +224,20 @@
         document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
+            // Gộp tất cả link
+            const linkInputs = document.querySelectorAll('input[name="productLink"]');
+            const links = Array.from(linkInputs)
+                .map(input => input.value.trim())
+                .filter(val => val !== '')
+                .join('\n');
+
             const pName = provinceSelect.options[provinceSelect.selectedIndex]?.text || "";
             const dName = districtSelect.options[districtSelect.selectedIndex]?.text || "";
             const wName = wardSelect.options[wardSelect.selectedIndex]?.text || "";
             const fullAddress = `${document.getElementById('addressDetail').value}, ${wName}, ${dName}, ${pName}`;
 
             const data = {
-                link: document.getElementById('productLink').value,
-                // Đã xóa receiver_name
+                link: links, // Gửi chuỗi các link xuống dòng
                 phone: document.getElementById('phoneNumber').value || "---",
                 code: document.getElementById('productName').value,
                 variant: document.getElementById('variant').value,
