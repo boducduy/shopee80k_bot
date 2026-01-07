@@ -10,44 +10,77 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { 
-            /* Nền xám rất nhạt để làm nổi bật form trắng ở giữa */
             background-color: #f3f4f6; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        .shopee-bg { background-color: #ee4d2d; }
-        .shopee-text { color: #ee4d2d; }
-        
-        /* Style cho ô nhập liệu: Viền mỏng, chữ to hơn, dễ nhìn */
         .input-field {
             @apply mt-2 block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-base text-gray-900 
             focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all;
         }
-        
-        /* Style tiêu đề mục: Đậm, rõ ràng */
         .section-title {
             @apply block text-base font-bold text-gray-800 mb-1;
         }
-        
-        /* Icon trong ô nhập liệu */
         .input-icon {
             @apply absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400;
+        }
+        /* Style cho Radio button được chọn */
+        input[type="radio"]:checked + div {
+            border-color: #ee4d2d;
+            background-color: #fff7f6;
+        }
+        input[type="radio"]:checked + div .radio-circle {
+            background-color: #ee4d2d;
+            border-color: #ee4d2d;
         }
     </style>
 </head>
 <body class="min-h-screen py-8 px-4 flex justify-center items-start">
 
-    <!-- Container chính: Màu trắng, đổ bóng nhẹ, bo góc -->
     <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
         
-        <!-- Header màu cam nổi bật -->
         <div class="bg-gradient-to-r from-orange-500 to-red-500 p-6 text-center text-white">
             <h2 class="text-3xl font-extrabold uppercase tracking-wide">📦 Đơn Đặt Hàng</h2>
-            <p class="text-orange-100 text-sm mt-1">Điền thông tin bên dưới để lên đơn</p>
+            <p class="text-orange-100 text-sm mt-1">Vui lòng chọn loại Voucher và điền thông tin</p>
         </div>
 
         <form id="orderForm" class="p-6 space-y-6">
             
-            <!-- 1. Link Sản Phẩm (Đã thêm chức năng nhiều link) -->
+            <!-- 0. CHỌN LOẠI VOUCHER -->
+            <div>
+                <label class="section-title">Loại Voucher <span class="text-red-500">*</span></label>
+                <div class="grid grid-cols-1 gap-3 mt-2">
+                    <!-- Option 1: 60k -->
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="voucherType" value="60k" class="peer sr-only" checked onchange="updateTotalButton()">
+                        <div class="p-4 border-2 border-gray-200 rounded-lg hover:bg-gray-50 transition-all flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="radio-circle w-5 h-5 rounded-full border-2 border-gray-300 mr-3 flex-shrink-0"></div>
+                                <div>
+                                    <p class="font-bold text-gray-800">Voucher 60k</p>
+                                    <p class="text-sm text-gray-500">Giá: <span id="lblPrice60">24.000</span> đ</p>
+                                </div>
+                            </div>
+                            <span class="text-orange-500 font-bold"><i class="fas fa-check-circle"></i></span>
+                        </div>
+                    </label>
+
+                    <!-- Option 2: 80k -->
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="voucherType" value="80k" class="peer sr-only" onchange="updateTotalButton()">
+                        <div class="p-4 border-2 border-gray-200 rounded-lg hover:bg-gray-50 transition-all flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="radio-circle w-5 h-5 rounded-full border-2 border-gray-300 mr-3 flex-shrink-0"></div>
+                                <div>
+                                    <p class="font-bold text-gray-800">Voucher 80k</p>
+                                    <p class="text-sm text-orange-600 font-medium italic">Giá: <span id="lblPrice80">29.000</span> đ (Lúc có lúc không)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 1. Link Sản Phẩm -->
             <div>
                 <label class="section-title">1. Link Sản Phẩm <span class="text-red-500">*</span></label>
                 <div id="linkContainer">
@@ -56,7 +89,6 @@
                         <input type="url" name="productLink" required class="input-field pl-12" placeholder="Dán link Shopee vào đây...">
                     </div>
                 </div>
-                <!-- Nút thêm link -->
                 <button type="button" id="addLinkBtn" class="text-sm text-orange-600 font-semibold hover:text-orange-800 focus:outline-none flex items-center mt-2">
                     <i class="fas fa-plus-circle mr-1"></i> Thêm link khác
                 </button>
@@ -96,7 +128,7 @@
                     <label class="section-title">5. Số lượng</label>
                     <div class="relative">
                         <div class="input-icon"><i class="fas fa-sort-numeric-up"></i></div>
-                        <input type="number" id="quantity" value="1" min="1" class="input-field pl-12 font-bold text-center">
+                        <input type="number" id="quantity" value="1" min="1" class="input-field pl-12 font-bold text-center" oninput="updateTotalButton()">
                     </div>
                 </div>
             </div>
@@ -106,7 +138,7 @@
                 <label class="section-title">6. Ghi chú</label>
                 <div class="relative">
                     <div class="absolute top-4 left-0 pl-4 flex items-center pointer-events-none text-gray-400"><i class="fas fa-pen"></i></div>
-                    <textarea id="note" rows="3" class="input-field pl-12" placeholder="Ghi chú thêm về sản phẩm..."></textarea>
+                    <textarea id="note" rows="3" class="input-field pl-12" placeholder="GHI SẢN PHẨM MUA Ạ KHÔNG PHẢI TÊN SẢN PHẨM NHỚ GHI GIÚP MÌNH NẾU KHÔNG CÓ THÌ BỎ QUA"></textarea>
                 </div>
             </div>
 
@@ -138,12 +170,10 @@
                 <i class="fas fa-info-circle mr-1"></i> Lưu ý: Link khác shop sẽ chia ra từng đơn, mỗi đơn ship sẽ là 1k.
             </div>
 
-            <!-- NÚT GỬI (Sticky bottom on mobile or simple block) -->
-            <div class="pt-2 pb-2">
+            <!-- NÚT GỬI -->
+            <div class="pt-4 pb-2">
                 <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform transition hover:scale-[1.02] active:scale-95 flex justify-center items-center gap-2 text-lg">
-                    <span>GỬI ĐƠN HÀNG NGAY</span>
-                    <!-- Hiển thị phí ở đây -->
-                    <span id="feeAmount" class="bg-white/20 px-2 py-1 rounded text-sm font-normal ml-1">...</span>
+                    <span id="btnText">GỬI ĐƠN HÀNG NGAY</span>
                 </button>
             </div>
 
@@ -154,11 +184,43 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // --- NHẬN DỮ LIỆU TỪ URL BOT ---
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Nhận giá từ Bot
+        const price60 = parseInt(urlParams.get('p60')) || 24000;
+        const price80 = parseInt(urlParams.get('p80')) || 29000;
+        // Đã xóa adminFee (hoặc set = 0)
+        
+        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+
+        document.getElementById('lblPrice60').innerText = formatNumber(price60);
+        document.getElementById('lblPrice80').innerText = formatNumber(price80);
+
+        // --- HÀM TÍNH TỔNG TIỀN ---
+        function updateTotalButton() {
+            // 1. Lấy loại voucher
+            const selectedVoucher = document.querySelector('input[name="voucherType"]:checked').value;
+            const unitPrice = (selectedVoucher === '80k') ? price80 : price60;
+
+            // 2. Lấy số lượng
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+
+            // 3. Tính tổng (KHÔNG CỘNG PHÍ)
+            const total = unitPrice * quantity;
+
+            // 4. Cập nhật nút bấm
+            const btnText = document.getElementById('btnText');
+            btnText.innerHTML = `GỬI ĐƠN HÀNG NGAY - ${formatNumber(total)} đ`;
+        }
+
+        updateTotalButton();
+
         // --- XỬ LÝ THÊM LINK ---
         document.getElementById('addLinkBtn').addEventListener('click', function() {
             const container = document.getElementById('linkContainer');
             const div = document.createElement('div');
-            div.className = 'relative mb-2 fade-in'; // Thêm animation nếu muốn
+            div.className = 'relative mb-2 fade-in';
             div.innerHTML = `
                 <div class="input-icon"><i class="fas fa-link"></i></div>
                 <input type="url" name="productLink" class="input-field pl-12" placeholder="Dán thêm link Shopee...">
@@ -169,17 +231,7 @@
             container.appendChild(div);
         });
 
-        // --- NHẬN DỮ LIỆU TỪ BOT ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const adminFee = parseInt(urlParams.get('fee')) || 25000;
-
-        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-
-        // Hiển thị giá lên nút (Sửa thành dấu trừ -)
-        const feeSpan = document.getElementById('feeAmount');
-        feeSpan.innerText = `- ${formatNumber(adminFee)} đ`;
-
-        // --- API ĐỊA CHÍNH (Giữ nguyên logic) ---
+        // --- API ĐỊA CHÍNH ---
         const provinceSelect = document.getElementById('province');
         const districtSelect = document.getElementById('district');
         const wardSelect = document.getElementById('ward');
@@ -229,7 +281,8 @@
         document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Gộp tất cả link
+            const selectedVoucher = document.querySelector('input[name="voucherType"]:checked').value;
+
             const linkInputs = document.querySelectorAll('input[name="productLink"]');
             const links = Array.from(linkInputs)
                 .map(input => input.value.trim())
@@ -241,16 +294,21 @@
             const wName = wardSelect.options[wardSelect.selectedIndex]?.text || "";
             const fullAddress = `${document.getElementById('addressDetail').value}, ${wName}, ${dName}, ${pName}`;
 
+            const unitPrice = (selectedVoucher === '80k') ? price80 : price60;
+            const qty = parseInt(document.getElementById('quantity').value) || 1;
+            const calculatedTotal = unitPrice * qty; // Không cộng fee
+
             const data = {
-                link: links, // Gửi chuỗi các link xuống dòng
+                voucher_type: selectedVoucher, 
+                link: links,
                 phone: document.getElementById('phoneNumber').value || "---",
                 code: document.getElementById('productName').value,
                 variant: document.getElementById('variant').value,
-                quantity: document.getElementById('quantity').value,
+                quantity: qty,
                 address: fullAddress,
                 note: document.getElementById('note').value,
-                price: "---", 
-                total: "---"  
+                price: formatNumber(unitPrice), 
+                total: formatNumber(calculatedTotal) 
             };
 
             tg.sendData(JSON.stringify(data));
