@@ -40,7 +40,16 @@
         .voucher-option:checked + div .check-icon {
             opacity: 1;
         }
-        /* Xóa style price-tag vì không còn dùng */
+        /* Style cho giá tiền trên nút */
+        .price-display {
+            font-size: 1.1em;
+            font-weight: 800;
+            margin-left: 8px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
         
         /* Animation fade in cho link mới */
         .fade-in {
@@ -74,22 +83,22 @@
                 <div class="grid grid-cols-2 gap-4">
                     <!-- Option 60k -->
                     <label class="cursor-pointer relative group">
-                        <!-- Đã xóa onchange="updatePrice()" -->
-                        <input type="radio" name="voucherType" value="60k" class="voucher-option sr-only">
+                        <!-- Thêm onchange để cập nhật giá -->
+                        <input type="radio" name="voucherType" value="60k" class="voucher-option sr-only" onchange="updatePrice()">
                         <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
                             <span class="font-bold text-gray-800 text-lg">Voucher 60k</span>
-                            <!-- Đã xóa dòng hiển thị giá -->
+                            <div class="text-sm text-gray-500 mt-1" id="labelPrice60">24k/lượt</div>
                             <i class="fas fa-check-circle check-icon absolute top-2 right-2 text-orange-500 opacity-0 transition-opacity text-lg"></i>
                         </div>
                     </label>
 
                     <!-- Option 80k -->
                     <label class="cursor-pointer relative group">
-                        <!-- Đã xóa onchange="updatePrice()" -->
-                        <input type="radio" name="voucherType" value="80k" class="voucher-option sr-only" checked>
+                        <!-- Thêm onchange để cập nhật giá -->
+                        <input type="radio" name="voucherType" value="80k" class="voucher-option sr-only" checked onchange="updatePrice()">
                         <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
                             <span class="font-bold text-gray-800 text-lg">Voucher 80k</span>
-                            <!-- Đã xóa dòng hiển thị giá -->
+                             <div class="text-sm text-gray-500 mt-1" id="labelPrice80">29k/lượt</div>
                             <i class="fas fa-check-circle check-icon absolute top-2 right-2 text-orange-500 opacity-0 transition-opacity text-lg"></i>
                         </div>
                     </label>
@@ -147,7 +156,7 @@
                     <label class="section-title">5. Số lượng</label>
                     <div class="relative">
                         <div class="input-icon"><i class="fas fa-sort-numeric-up"></i></div>
-                        <!-- Đã xóa onchange="updatePrice()" -->
+                        <!-- Số lượng chỉ để hiển thị, không tính tiền -->
                         <input type="number" id="quantity" value="1" min="1" class="input-field pl-12 font-bold text-center">
                     </div>
                 </div>
@@ -194,9 +203,10 @@
             <!-- NÚT GỬI (Fixed Bottom) -->
             <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50">
                 <div class="max-w-lg mx-auto">
-                    <!-- Đã xóa hiển thị số tiền -->
+                    <!-- Nút Gửi hiển thị giá tiền -->
                     <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transform transition hover:scale-[1.01] active:scale-95 flex justify-center items-center text-lg">
                         <span>GỬI ĐƠN HÀNG</span>
+                        <span id="btnPriceDisplay" class="price-display">29.000đ</span>
                     </button>
                 </div>
             </div>
@@ -208,7 +218,39 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // ĐÃ XÓA LOGIC TÍNH TIỀN
+        // --- CẤU HÌNH GIÁ (MẶC ĐỊNH) ---
+        let PRICE_60K = 24000;
+        let PRICE_80K = 29000;
+
+        // --- LẤY GIÁ TỪ URL (BOT GỬI SANG) ---
+        // Bot Python gửi link dạng: ?v60=24000&v80=29000
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('v60')) PRICE_60K = parseInt(urlParams.get('v60'));
+        if (urlParams.has('v80')) PRICE_80K = parseInt(urlParams.get('v80'));
+
+        // Cập nhật nhãn giá nhỏ dưới radio button
+        document.getElementById('labelPrice60').innerText = new Intl.NumberFormat('vi-VN').format(PRICE_60K) + 'đ/lượt';
+        document.getElementById('labelPrice80').innerText = new Intl.NumberFormat('vi-VN').format(PRICE_80K) + 'đ/lượt';
+
+        // --- HÀM CẬP NHẬT GIÁ TRÊN NÚT ---
+        function updatePrice() {
+            const voucherType = document.querySelector('input[name="voucherType"]:checked').value;
+            let finalPrice = 0;
+
+            if (voucherType === '60k') {
+                finalPrice = PRICE_60K;
+            } else {
+                finalPrice = PRICE_80K;
+            }
+
+            // Hiển thị lên nút (định dạng tiền Việt)
+            const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(finalPrice);
+            document.getElementById('btnPriceDisplay').innerText = formattedPrice;
+        }
+
+        // Gọi 1 lần khi load trang để hiển thị giá mặc định (80k)
+        updatePrice();
+
 
         // --- XỬ LÝ THÊM LINK ---
         document.getElementById('addLinkBtn').addEventListener('click', function() {
