@@ -40,10 +40,7 @@
         .voucher-option:checked + div .check-icon {
             opacity: 1;
         }
-        .voucher-option:checked + div .price-tag {
-            color: #c24125;
-            font-weight: 700;
-        }
+        /* Xóa style price-tag vì không còn dùng */
         
         /* Animation fade in cho link mới */
         .fade-in {
@@ -77,20 +74,22 @@
                 <div class="grid grid-cols-2 gap-4">
                     <!-- Option 60k -->
                     <label class="cursor-pointer relative group">
-                        <input type="radio" name="voucherType" value="60k" class="voucher-option sr-only" onchange="updatePrice()">
+                        <!-- Đã xóa onchange="updatePrice()" -->
+                        <input type="radio" name="voucherType" value="60k" class="voucher-option sr-only">
                         <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
                             <span class="font-bold text-gray-800 text-lg">Voucher 60k</span>
-                            <span class="price-tag text-sm text-gray-500 mt-1">Giá: 24.000đ</span>
+                            <!-- Đã xóa dòng hiển thị giá -->
                             <i class="fas fa-check-circle check-icon absolute top-2 right-2 text-orange-500 opacity-0 transition-opacity text-lg"></i>
                         </div>
                     </label>
 
                     <!-- Option 80k -->
                     <label class="cursor-pointer relative group">
-                        <input type="radio" name="voucherType" value="80k" class="voucher-option sr-only" onchange="updatePrice()" checked>
+                        <!-- Đã xóa onchange="updatePrice()" -->
+                        <input type="radio" name="voucherType" value="80k" class="voucher-option sr-only" checked>
                         <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
                             <span class="font-bold text-gray-800 text-lg">Voucher 80k</span>
-                            <span class="price-tag text-sm text-gray-500 mt-1">Giá: 29.000đ</span>
+                            <!-- Đã xóa dòng hiển thị giá -->
                             <i class="fas fa-check-circle check-icon absolute top-2 right-2 text-orange-500 opacity-0 transition-opacity text-lg"></i>
                         </div>
                     </label>
@@ -148,7 +147,8 @@
                     <label class="section-title">5. Số lượng</label>
                     <div class="relative">
                         <div class="input-icon"><i class="fas fa-sort-numeric-up"></i></div>
-                        <input type="number" id="quantity" value="1" min="1" class="input-field pl-12 font-bold text-center" onchange="updatePrice()">
+                        <!-- Đã xóa onchange="updatePrice()" -->
+                        <input type="number" id="quantity" value="1" min="1" class="input-field pl-12 font-bold text-center">
                     </div>
                 </div>
             </div>
@@ -194,9 +194,9 @@
             <!-- NÚT GỬI (Fixed Bottom) -->
             <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50">
                 <div class="max-w-lg mx-auto">
-                    <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transform transition hover:scale-[1.01] active:scale-95 flex justify-between items-center text-lg">
+                    <!-- Đã xóa hiển thị số tiền -->
+                    <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transform transition hover:scale-[1.01] active:scale-95 flex justify-center items-center text-lg">
                         <span>GỬI ĐƠN HÀNG</span>
-                        <span id="feeAmount" class="bg-white/20 px-3 py-1 rounded-lg text-base font-medium">- 29.000 đ</span>
                     </button>
                 </div>
             </div>
@@ -208,31 +208,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // CẤU HÌNH GIÁ (Cần khớp với Bot Python)
-        const PRICES = {
-            '60k': 24000,
-            '80k': 29000
-        };
-
-        function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-
-        // Hàm cập nhật giá tiền trên nút Submit
-        function updatePrice() {
-            // Lấy loại voucher đang chọn
-            const selectedType = document.querySelector('input[name="voucherType"]:checked').value;
-            const unitPrice = PRICES[selectedType];
-            
-            // Lấy số lượng
-            let quantity = parseInt(document.getElementById('quantity').value);
-            if (isNaN(quantity) || quantity < 1) quantity = 1;
-
-            const totalPrice = unitPrice * quantity;
-            
-            document.getElementById('feeAmount').innerText = `- ${formatNumber(totalPrice)} đ`;
-        }
-
-        // Gọi cập nhật giá lần đầu khi load trang
-        updatePrice();
+        // ĐÃ XÓA LOGIC TÍNH TIỀN
 
         // --- XỬ LÝ THÊM LINK ---
         document.getElementById('addLinkBtn').addEventListener('click', function() {
@@ -339,7 +315,7 @@
                 phone: document.getElementById('phoneNumber').value || "---",
                 code: document.getElementById('productName').value || "---",
                 variant: document.getElementById('variant').value,
-                quantity: document.getElementById('quantity').value,
+                quantity: document.getElementById('quantity').value, // Vẫn gửi số lượng cho admin
                 address: fullAddress,
                 note: document.getElementById('note').value
             };
