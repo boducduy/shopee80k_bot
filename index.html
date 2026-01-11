@@ -76,7 +76,7 @@
         <form id="orderForm" class="p-6 space-y-6">
             
             <!-- 0. CHỌN LOẠI VOUCHER (QUAN TRỌNG) -->
-            <div class="bg-orange-50 border border-orange-100 rounded-xl p-4">
+            <div class="bg-orange-5 border border-orange-100 rounded-xl p-4">
                 <label class="section-title text-orange-800 mb-3 flex items-center">
                     <i class="fas fa-ticket-alt mr-2 text-orange-600"></i> Chọn loại Voucher <span class="text-red-500 ml-1">*</span>
                 </label>
@@ -87,7 +87,8 @@
                         <input type="radio" name="voucherType" value="60k" class="voucher-option sr-only" onchange="updatePrice()">
                         <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
                             <span class="font-bold text-gray-800 text-lg">Voucher 60k</span>
-                            <div class="text-sm text-gray-500 mt-1" id="labelPrice60">24k/lượt</div>
+                            <!-- Đã cập nhật text hiển thị ở đây -->
+                            <div class="text-sm text-gray-500 mt-1" id="labelPrice60">20k/lượt</div>
                             <i class="fas fa-check-circle check-icon absolute top-2 right-2 text-orange-500 opacity-0 transition-opacity text-lg"></i>
                         </div>
                     </label>
@@ -124,10 +125,10 @@
 
             <!-- 2.Tên+Số điện thoại -->
             <div>
-                <label class="section-title">2.Tên+Số điện thoại <span class="text-gray-400 font-normal text-sm ml-1">(BỎ QUA NẾU QUEN SHIPSHIP)</span></label>
+                <label class="section-title">2.Tên+Số điện thoại <span class="text-gray-400 font-normal text-sm ml-1">(QUEN SHIP BỎ QUA)</span></label>
                 <div class="relative">
                     <div class="input-icon"><i class="fas fa-phone"></i></div>
-                    <input type="tel" id="phoneNumber" class="input-field pl-12" placeholder="Nhập SĐT nhận hàng...">
+                    <input type="tel" id="phoneNumber" class="input-field pl-12" placeholder="QUEN SHIP BỎ QUA">
                 </div>
             </div>
 
@@ -219,7 +220,8 @@
         tg.expand();
 
         // --- CẤU HÌNH GIÁ (MẶC ĐỊNH) ---
-        let PRICE_60K = 24000;
+        // Đã cập nhật giá 60k thành 20000
+        let PRICE_60K = 20000;
         let PRICE_80K = 29000;
 
         // --- LẤY GIÁ TỪ URL (BOT GỬI SANG) ---
