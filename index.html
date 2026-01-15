@@ -125,10 +125,12 @@
 
             <!-- 2.Tên+Số điện thoại -->
             <div>
-                <label class="section-title">2.Tên+Số điện thoại <span class="text-gray-400 font-normal text-sm ml-1">(QUEN SHIP BỎ QUA)</span></label>
+                <label class="section-title">2. Tên + Số điện thoại <span class="text-gray-400 font-normal text-sm ml-1">(QUEN SHIP BỎ QUA)</span></label>
                 <div class="relative">
-                    <div class="input-icon"><i class="fas fa-phone"></i></div>
-                    <input type="tel" id="phoneNumber" class="input-field pl-12" placeholder="QUEN SHIP BỎ QUA">
+                    <!-- Icon đổi thành address-book để hợp với tên + sđt hơn -->
+                    <div class="input-icon"><i class="fas fa-address-book"></i></div>
+                    <!-- QUAN TRỌNG: Đã đổi type="tel" thành type="text" để nhập chữ -->
+                    <input type="text" id="phoneNumber" class="input-field pl-12" placeholder="Ví dụ: Nam - 0912345678">
                 </div>
             </div>
 
