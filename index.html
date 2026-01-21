@@ -123,7 +123,7 @@
                         <input type="radio" name="voucherType" value="100k" class="voucher-option sr-only" onchange="updatePrice()">
                         <div class="border-2 border-gray-200 rounded-xl p-2 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
                             <span class="font-bold text-gray-800 text-sm md:text-base">Voucher 100k</span>
-                             <div class="text-xs md:text-sm text-gray-500 mt-1" id="labelPrice100">33k/lượt</div>
+                             <div class="text-xs md:text-sm text-gray-500 mt-1" id="labelPrice100">30k/lượt</div>
                             <i class="fas fa-check-circle check-icon absolute top-1 right-1 text-orange-500 opacity-0 transition-opacity text-base"></i>
                         </div>
                     </label>
@@ -254,7 +254,7 @@
         // --- CẤU HÌNH GIÁ ---
         let PRICE_60K = 20000;
         let PRICE_80K = 26000;
-        let PRICE_100K = 33000;
+        let PRICE_100K = 30000;
 
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('v60')) PRICE_60K = parseInt(urlParams.get('v60'));
