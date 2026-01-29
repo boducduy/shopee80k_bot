@@ -1,455 +1,747 @@
 <!DOCTYPE html>
+
 <html lang="vi">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Đặt Voucher Shopee</title>
+
     <!-- SDK Telegram WebApp -->
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Thư viện TomSelect để tìm kiếm trong thẻ Select -->
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
     <style>
+
         body { 
+
+            /* Nền xám rất nhạt để làm nổi bật form trắng ở giữa */
+
             background-color: #f3f4f6; 
+
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            padding-bottom: 100px;
+
+            padding-bottom: 100px; /* Để tránh nút submit che nội dung */
+
         }
+
         
+
         .input-field {
+
             @apply mt-2 block w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-base text-gray-900 
+
             focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all;
+
         }
+
         
+
+        /* Style tiêu đề mục: Đậm, rõ ràng */
+
         .section-title {
+
             @apply block text-base font-bold text-gray-800 mb-1;
+
         }
+
         
+
+        /* Icon trong ô nhập liệu */
+
         .input-icon {
+
             @apply absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400;
+
         }
+
+
+
+        /* Style cho radio button chọn loại voucher */
 
         .voucher-option:checked + div {
+
             border-color: #ee4d2d;
+
             background-color: #fff1f0;
+
             box-shadow: 0 4px 6px -1px rgba(238, 77, 45, 0.1), 0 2px 4px -1px rgba(238, 77, 45, 0.06);
-        }
-        .voucher-option:checked + div .check-icon {
-            opacity: 1;
-        }
-        
-        .price-display {
-            font-size: 1.1em;
-            font-weight: 800;
-            margin-left: 8px;
-            color: #fff;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 2px 8px;
-            border-radius: 6px;
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+
         }
 
-        /* Tùy chỉnh CSS cho TomSelect để khớp giao diện */
-        .ts-control {
-            border-radius: 0.5rem !important;
-            padding: 0.75rem 1rem !important;
-            border-color: #d1d5db !important;
-            font-size: 1rem !important;
+        .voucher-option:checked + div .check-icon {
+
+            opacity: 1;
+
         }
-        .ts-control.focus {
-            border-color: #f97316 !important; /* orange-500 */
-            box-shadow: 0 0 0 2px #fed7aa !important; /* orange-200 ring */
+
+        /* Style cho giá tiền trên nút */
+
+        .price-display {
+
+            font-size: 1.1em;
+
+            font-weight: 800;
+
+            margin-left: 8px;
+
+            color: #fff;
+
+            background: rgba(255, 255, 255, 0.2);
+
+            padding: 2px 8px;
+
+            border-radius: 6px;
+
         }
-        .ts-dropdown {
-            border-radius: 0.5rem !important;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-            z-index: 50 !important;
+
+        
+
+        /* Animation fade in cho link mới */
+
+        .fade-in {
+
+            animation: fadeIn 0.3s ease-in-out;
+
         }
+
+        @keyframes fadeIn {
+
+            from { opacity: 0; transform: translateY(-5px); }
+
+            to { opacity: 1; transform: translateY(0); }
+
+        }
+
     </style>
+
 </head>
+
 <body class="min-h-screen py-8 px-4 flex justify-center items-start">
 
+
+
     <!-- Container chính -->
+
     <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+
         
-        <!-- Header -->
+
+        <!-- Header màu cam nổi bật -->
+
         <div class="bg-gradient-to-r from-orange-500 to-red-500 p-6 text-center text-white relative overflow-hidden">
+
             <div class="absolute top-0 left-0 w-full h-full bg-white opacity-5 transform -skew-x-12"></div>
+
             <h2 class="text-2xl md:text-3xl font-extrabold uppercase tracking-wide relative z-10">📦 Đơn Đặt Hàng</h2>
+
             <p class="text-orange-100 text-sm mt-1 relative z-10">Chọn loại Voucher và điền thông tin bên dưới</p>
+
         </div>
 
+
+
         <form id="orderForm" class="p-6 space-y-6">
+
             
-            <!-- 0. CHỌN LOẠI VOUCHER -->
+
+            <!-- 0. CHỌN LOẠI VOUCHER (QUAN TRỌNG) -->
+
             <div class="bg-orange-5 border border-orange-100 rounded-xl p-4">
+
                 <label class="section-title text-orange-800 mb-3 flex items-center">
+
                     <i class="fas fa-ticket-alt mr-2 text-orange-600"></i> Chọn loại Voucher <span class="text-red-500 ml-1">*</span>
+
                 </label>
-                <div class="grid grid-cols-3 gap-2">
+
+                <div class="grid grid-cols-2 gap-4">
+
                     <!-- Option 60k -->
+
                     <label class="cursor-pointer relative group">
+
+                        <!-- Thêm onchange để cập nhật giá -->
+
                         <input type="radio" name="voucherType" value="60k" class="voucher-option sr-only" onchange="updatePrice()">
-                        <div class="border-2 border-gray-200 rounded-xl p-2 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
-                            <span class="font-bold text-gray-800 text-sm md:text-base">Voucher 60k</span>
-                            <div class="text-xs md:text-sm text-gray-500 mt-1" id="labelPrice60">20k/lượt</div>
-                            <i class="fas fa-check-circle check-icon absolute top-1 right-1 text-orange-500 opacity-0 transition-opacity text-base"></i>
+
+                        <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
+
+                            <span class="font-bold text-gray-800 text-lg">Voucher 60k</span>
+
+                            <!-- Đã cập nhật text hiển thị ở đây -->
+
+                            <div class="text-sm text-gray-500 mt-1" id="labelPrice60">20k/lượt</div>
+
+                            <i class="fas fa-check-circle check-icon absolute top-2 right-2 text-orange-500 opacity-0 transition-opacity text-lg"></i>
+
                         </div>
+
                     </label>
+
+
 
                     <!-- Option 80k -->
+
                     <label class="cursor-pointer relative group">
+
+                        <!-- Thêm onchange để cập nhật giá -->
+
                         <input type="radio" name="voucherType" value="80k" class="voucher-option sr-only" checked onchange="updatePrice()">
-                        <div class="border-2 border-gray-200 rounded-xl p-2 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
-                            <span class="font-bold text-gray-800 text-sm md:text-base">Voucher 80k</span>
-                             <div class="text-xs md:text-sm text-gray-500 mt-1" id="labelPrice80">26k/lượt</div>
-                            <i class="fas fa-check-circle check-icon absolute top-1 right-1 text-orange-500 opacity-0 transition-opacity text-base"></i>
+
+                        <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
+
+                            <span class="font-bold text-gray-800 text-lg">Voucher 80k</span>
+
+                             <div class="text-sm text-gray-500 mt-1" id="labelPrice80">29k/lượt</div>
+
+                            <i class="fas fa-check-circle check-icon absolute top-2 right-2 text-orange-500 opacity-0 transition-opacity text-lg"></i>
+
                         </div>
+
                     </label>
 
-                    <!-- Option 100k -->
-                    <label class="cursor-pointer relative group">
-                        <input type="radio" name="voucherType" value="100k" class="voucher-option sr-only" onchange="updatePrice()">
-                        <div class="border-2 border-gray-200 rounded-xl p-2 text-center transition-all h-full flex flex-col justify-center items-center relative bg-white group-hover:border-orange-200">
-                            <span class="font-bold text-gray-800 text-sm md:text-base">Voucher 100k</span>
-                             <div class="text-xs md:text-sm text-gray-500 mt-1" id="labelPrice100">30k/lượt</div>
-                            <i class="fas fa-check-circle check-icon absolute top-1 right-1 text-orange-500 opacity-0 transition-opacity text-base"></i>
-                        </div>
-                    </label>
                 </div>
+
             </div>
+
+
 
             <!-- 1. Link Sản Phẩm -->
+
             <div>
+
                 <label class="section-title flex justify-between items-center">
+
                     <span>1. Link Sản Phẩm <span class="text-red-500">*</span></span>
+
                 </label>
+
                 <div id="linkContainer">
+
                     <div class="relative mb-3">
+
                         <div class="input-icon"><i class="fas fa-link"></i></div>
+
                         <input type="url" name="productLink" required class="input-field pl-12" placeholder="Dán link Shopee số 1...">
+
                     </div>
+
                 </div>
+
+                <!-- Nút thêm link -->
+
                 <button type="button" id="addLinkBtn" class="text-sm font-semibold text-orange-600 bg-orange-50 hover:bg-orange-100 px-4 py-2 rounded-lg transition-colors flex items-center">
+
                     <i class="fas fa-plus-circle mr-2"></i> Thêm link sản phẩm khác
+
                 </button>
+
             </div>
+
+
 
             <!-- 2.Tên+Số điện thoại -->
+
             <div>
+
                 <label class="section-title">2. Tên + Số điện thoại <span class="text-gray-400 font-normal text-sm ml-1">(QUEN SHIP BỎ QUA)</span></label>
+
                 <div class="relative">
+
+                    <!-- Icon đổi thành address-book để hợp với tên + sđt hơn -->
+
                     <div class="input-icon"><i class="fas fa-address-book"></i></div>
+
+                    <!-- QUAN TRỌNG: Đã đổi type="tel" thành type="text" để nhập chữ -->
+
                     <input type="text" id="phoneNumber" class="input-field pl-12" placeholder="Ví dụ: N Nam(091,234,5678)">
+
                 </div>
+
             </div>
+
+
 
             <!-- 3. Tên SP -->
+
             <div>
+
                 <label class="section-title">3. Tên Sản Phẩm</label>
+
                 <div class="relative">
+
                     <div class="input-icon"><i class="fas fa-box-open"></i></div>
+
                     <input type="text" id="productName" class="input-field pl-12" placeholder="Ví dụ: Áo thun đen, Giày size 40...">
+
                 </div>
+
             </div>
+
+
 
             <!-- Hàng ngang: Phân loại & Số lượng -->
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
                 <!-- 4. Phân loại -->
+
                 <div>
+
                     <label class="section-title">4. Phân loại <span class="text-red-500">*</span></label>
+
                     <div class="relative">
+
                         <div class="input-icon"><i class="fas fa-list-ul"></i></div>
+
                         <input type="text" id="variant" required class="input-field pl-12" placeholder="Màu, Size (GHI RÕ)">
+
                     </div>
+
                 </div>
+
+
 
                 <!-- 5. Số lượng -->
+
                 <div>
+
                     <label class="section-title">5. Số lượng</label>
+
                     <div class="relative">
+
                         <div class="input-icon"><i class="fas fa-sort-numeric-up"></i></div>
+
+                        <!-- Số lượng chỉ để hiển thị, không tính tiền -->
+
                         <input type="number" id="quantity" value="1" min="1" class="input-field pl-12 font-bold text-center">
+
                     </div>
+
                 </div>
+
             </div>
+
+
 
             <!-- 6. Ghi chú -->
+
             <div>
+
                 <label class="section-title">6. Ghi chú</label>
+
                 <div class="relative">
+
                     <div class="absolute top-4 left-0 pl-4 flex items-center pointer-events-none text-gray-400"><i class="fas fa-pen"></i></div>
+
                     <textarea id="note" rows="2" class="input-field pl-12" placeholder="Ghi chú thêm cho admin..."></textarea>
+
                 </div>
+
             </div>
 
-            <!-- 7. Địa chỉ nhận hàng (Tìm kiếm được) -->
+
+
+            <!-- 7. Địa chỉ nhận hàng -->
+
             <div class="bg-gray-50 border border-gray-200 rounded-xl p-5">
+
                 <label class="section-title text-gray-700 mb-3 flex items-center">
+
                     <i class="fas fa-map-marker-alt mr-2 text-red-500"></i> 7. Địa chỉ nhận hàng <span class="text-red-500 ml-1">*</span>
+
                 </label>
+
                 
-                <div class="space-y-4">
-                    <!-- Tỉnh/Thành -->
-                    <div>
-                        <select id="province" class="input-field w-full" required>
-                            <option value="">Chọn Tỉnh/Thành phố</option>
-                        </select>
-                    </div>
 
-                    <!-- Quận/Huyện -->
-                    <div>
-                        <select id="district" class="input-field w-full" required disabled>
-                            <option value="">Chọn Quận/Huyện</option>
-                        </select>
-                    </div>
+                <div class="space-y-3">
 
-                    <!-- Phường/Xã -->
-                    <div>
-                        <select id="ward" class="input-field w-full" required disabled>
-                            <option value="">Chọn Phường/Xã</option>
-                        </select>
-                    </div>
+                    <select id="province" class="input-field" required>
 
-                    <!-- Địa chỉ chi tiết (Đã bỏ gợi ý, quay về input thường) -->
+                        <option value="">-- Chọn Tỉnh/Thành phố --</option>
+
+                    </select>
+
+
+
+                    <select id="district" class="input-field bg-gray-100 text-gray-500" required disabled>
+
+                        <option value="">-- Chọn Quận/Huyện --</option>
+
+                    </select>
+
+
+
+                    <select id="ward" class="input-field bg-gray-100 text-gray-500" required disabled>
+
+                        <option value="">-- Chọn Phường/Xã --</option>
+
+                    </select>
+
+
+
                     <input type="text" id="addressDetail" required class="input-field" placeholder="Số nhà, tên đường cụ thể...">
+
                 </div>
+
             </div>
+
+
 
             <!-- Lưu ý nhỏ -->
+
             <div class="flex items-start gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-100">
+
                 <i class="fas fa-info-circle mt-1"></i>
+
                 <span>Lưu ý: Nếu có nhiều link, shop sẽ chia ra từng đơn. Mỗi đơn ship sẽ là 1k.</span>
+
             </div>
+
+
 
             <!-- NÚT GỬI (Fixed Bottom) -->
+
             <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50">
+
                 <div class="max-w-lg mx-auto">
+
                     <!-- Nút Gửi hiển thị giá tiền -->
+
                     <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transform transition hover:scale-[1.01] active:scale-95 flex justify-center items-center text-lg">
+
                         <span>GỬI ĐƠN HÀNG</span>
-                        <span id="btnPriceDisplay" class="price-display">26.000đ</span>
+
+                        <span id="btnPriceDisplay" class="price-display">29.000đ</span>
+
                     </button>
+
                 </div>
+
             </div>
 
+
+
         </form>
+
     </div>
 
+
+
     <script>
+
         const tg = window.Telegram.WebApp;
+
         tg.expand();
 
-        // --- CẤU HÌNH GIÁ ---
+
+
+        // --- CẤU HÌNH GIÁ (MẶC ĐỊNH) ---
+
+        // Đã cập nhật giá 60k thành 20000
+
         let PRICE_60K = 20000;
-        let PRICE_80K = 26000;
-        let PRICE_100K = 30000;
+
+        let PRICE_80K = 29000;
+
+
+
+        // --- LẤY GIÁ TỪ URL (BOT GỬI SANG) ---
+
+        // Bot Python gửi link dạng: ?v60=24000&v80=29000
 
         const urlParams = new URLSearchParams(window.location.search);
+
         if (urlParams.has('v60')) PRICE_60K = parseInt(urlParams.get('v60'));
+
         if (urlParams.has('v80')) PRICE_80K = parseInt(urlParams.get('v80'));
-        if (urlParams.has('v100')) PRICE_100K = parseInt(urlParams.get('v100'));
+
+
+
+        // Cập nhật nhãn giá nhỏ dưới radio button
 
         document.getElementById('labelPrice60').innerText = new Intl.NumberFormat('vi-VN').format(PRICE_60K) + 'đ/lượt';
+
         document.getElementById('labelPrice80').innerText = new Intl.NumberFormat('vi-VN').format(PRICE_80K) + 'đ/lượt';
-        document.getElementById('labelPrice100').innerText = new Intl.NumberFormat('vi-VN').format(PRICE_100K) + 'đ/lượt';
+
+
+
+        // --- HÀM CẬP NHẬT GIÁ TRÊN NÚT ---
 
         function updatePrice() {
+
             const voucherType = document.querySelector('input[name="voucherType"]:checked').value;
-            let finalPrice = (voucherType === '60k') ? PRICE_60K : (voucherType === '80k' ? PRICE_80K : PRICE_100K);
-            document.getElementById('btnPriceDisplay').innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(finalPrice);
+
+            let finalPrice = 0;
+
+
+
+            if (voucherType === '60k') {
+
+                finalPrice = PRICE_60K;
+
+            } else {
+
+                finalPrice = PRICE_80K;
+
+            }
+
+
+
+            // Hiển thị lên nút (định dạng tiền Việt)
+
+            const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(finalPrice);
+
+            document.getElementById('btnPriceDisplay').innerText = formattedPrice;
+
         }
+
+
+
+        // Gọi 1 lần khi load trang để hiển thị giá mặc định (80k)
+
         updatePrice();
 
 
+
+
+
         // --- XỬ LÝ THÊM LINK ---
+
         document.getElementById('addLinkBtn').addEventListener('click', function() {
+
             const container = document.getElementById('linkContainer');
+
             const count = container.children.length + 1;
+
+            
+
             const div = document.createElement('div');
+
             div.className = 'relative mb-3 fade-in flex items-center gap-2';
+
             div.innerHTML = `
+
                 <div class="relative w-full">
+
                     <div class="input-icon"><i class="fas fa-link"></i></div>
+
                     <input type="url" name="productLink" class="input-field pl-12 mt-0" placeholder="Dán link Shopee số ${count}...">
+
                 </div>
+
                 <button type="button" class="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-colors" onclick="removeLink(this)">
+
                     <i class="fas fa-trash-alt"></i>
+
                 </button>
+
             `;
+
             container.appendChild(div);
+
         });
+
+
 
         function removeLink(btn) {
+
             btn.parentElement.remove();
+
         }
 
-        // --- KHỞI TẠO TOM SELECT & API ĐỊA CHÍNH ---
-        // Biến lưu trữ instance của TomSelect để thao tác động (clear/add options)
-        let tomProvince, tomDistrict, tomWard;
 
-        // Cấu hình chung cho TomSelect
-        const tomConfig = {
-            create: false,
-            sortField: { field: "text", direction: "asc" },
-            placeholder: "Chọn...", // Đã xóa "Tìm kiếm hoặc"
-            plugins: ['no_active_items'], // Không auto-select item đầu tiên
-            maxOptions: null // Hiển thị tất cả
-        };
 
-        // Hàm khởi tạo
-        function initSelects() {
-            // Đã xóa từ "trước" trong các placeholder bên dưới
-            tomProvince = new TomSelect('#province', tomConfig);
-            tomDistrict = new TomSelect('#district', { ...tomConfig, placeholder: "Chọn Tỉnh/Thành phố..." });
-            tomWard = new TomSelect('#ward', { ...tomConfig, placeholder: "Chọn Quận/Huyện..." });
-            
-            // Khóa District/Ward lúc đầu
-            tomDistrict.disable();
-            tomWard.disable();
-        }
+        // --- API ĐỊA CHÍNH (Tỉnh/Thành -> Quận/Huyện -> Phường/Xã) ---
+
+        const provinceSelect = document.getElementById('province');
+
+        const districtSelect = document.getElementById('district');
+
+        const wardSelect = document.getElementById('ward');
+
+
 
         async function fetchLocations() {
+
             try {
-                // Load Tỉnh/Thành
+
                 const res = await fetch('https://esgoo.net/api-tinhthanh/1/0.htm');
+
                 const data = await res.json();
+
                 if(data.error===0) {
-                    // Thêm data vào TomSelect Province
-                    tomProvince.clearOptions();
-                    data.data.forEach(p => {
-                        tomProvince.addOption({value: p.id, text: p.full_name});
-                    });
-                    // Refresh lại UI
-                    tomProvince.sync();
+
+                    provinceSelect.innerHTML = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
+
+                    data.data.forEach(p => provinceSelect.add(new Option(p.full_name, p.id)));
+
                 }
-            } catch(e) { console.error(e); }
+
+            } catch(e){}
+
         }
 
-        // Sự kiện khi chọn Tỉnh/Thành
-        // TomSelect ẩn select gốc, nhưng ta có thể listen event trên TomSelect instance hoặc select gốc (nếu sync tốt)
-        // Dùng 'change' trên select gốc vẫn hoạt động với TomSelect
-        document.getElementById('province').addEventListener('change', async function() {
-            const idProvince = this.value;
+        
+
+        provinceSelect.onchange = async function() {
+
+            districtSelect.innerHTML='<option>Đang tải...</option>';
+
+            wardSelect.innerHTML='<option value="">-- Chọn Phường/Xã --</option>';
+
+            districtSelect.disabled = true;
+
+            wardSelect.disabled = true;
+
+            districtSelect.classList.add('bg-gray-100', 'text-gray-500'); 
+
             
-            // Reset District & Ward
-            tomDistrict.clear();
-            tomDistrict.clearOptions();
-            tomDistrict.disable();
-            tomDistrict.settings.placeholder = "Đang tải...";
-            tomDistrict.sync();
 
-            tomWard.clear();
-            tomWard.clearOptions();
-            tomWard.disable();
-            tomWard.sync();
+            const res = await fetch(`https://esgoo.net/api-tinhthanh/2/${this.value}.htm`);
 
-            if(!idProvince) return;
+            const d = await res.json();
 
-            // Fetch Quận/Huyện
-            try {
-                const res = await fetch(`https://esgoo.net/api-tinhthanh/2/${idProvince}.htm`);
-                const d = await res.json();
-                if(d.error===0) {
-                    d.data.forEach(x => {
-                        tomDistrict.addOption({value: x.id, text: x.full_name});
-                    });
-                    tomDistrict.settings.placeholder = "Chọn Quận/Huyện";
-                    tomDistrict.enable();
-                    tomDistrict.sync();
-                }
-            } catch(e){}
-        });
+            districtSelect.innerHTML='<option value="">-- Chọn Quận/Huyện --</option>';
 
-        // Sự kiện khi chọn Quận/Huyện
-        document.getElementById('district').addEventListener('change', async function() {
-            const idDistrict = this.value;
-            
-            // Reset Ward
-            tomWard.clear();
-            tomWard.clearOptions();
-            tomWard.disable();
-            tomWard.settings.placeholder = "Đang tải...";
-            tomWard.sync();
+            d.data.forEach(x => districtSelect.add(new Option(x.full_name, x.id)));
 
-            if(!idDistrict) return;
+            districtSelect.disabled=false;
 
-            // Fetch Phường/Xã
-            try {
-                const res = await fetch(`https://esgoo.net/api-tinhthanh/3/${idDistrict}.htm`);
-                const d = await res.json();
-                if(d.error===0) {
-                    d.data.forEach(x => {
-                        tomWard.addOption({value: x.id, text: x.full_name});
-                    });
-                    tomWard.settings.placeholder = "Chọn Phường/Xã";
-                    tomWard.enable();
-                    tomWard.sync();
-                }
-            } catch(e){}
-        });
+            districtSelect.classList.remove('bg-gray-100', 'text-gray-500');
 
-        // Chạy khi load trang
-        window.onload = () => {
-            initSelects();
-            fetchLocations();
         };
 
+
+
+        districtSelect.onchange = async function() {
+
+            wardSelect.innerHTML='<option>Đang tải...</option>';
+
+            wardSelect.disabled=true;
+
+            wardSelect.classList.add('bg-gray-100', 'text-gray-500');
+
+
+
+            const res = await fetch(`https://esgoo.net/api-tinhthanh/3/${this.value}.htm`);
+
+            const d = await res.json();
+
+            wardSelect.innerHTML='<option value="">-- Chọn Phường/Xã --</option>';
+
+            d.data.forEach(x => wardSelect.add(new Option(x.full_name, x.id)));
+
+            wardSelect.disabled=false;
+
+            wardSelect.classList.remove('bg-gray-100', 'text-gray-500');
+
+        };
+
+        
+
+        window.onload = fetchLocations;
+
+
+
         // --- XỬ LÝ GỬI DỮ LIỆU ---
+
         document.getElementById('orderForm').addEventListener('submit', function(e) {
+
             e.preventDefault();
 
+
+
+            // 1. Lấy loại voucher
+
             const voucherType = document.querySelector('input[name="voucherType"]:checked').value;
+
+
+
+            // 2. Gộp tất cả các link thành chuỗi, cách nhau bởi xuống dòng
+
             const linkInputs = document.querySelectorAll('input[name="productLink"]');
-            const links = Array.from(linkInputs).map(i => i.value.trim()).filter(v => v !== '').join('\n');
+
+            const links = Array.from(linkInputs)
+
+                .map(input => input.value.trim())
+
+                .filter(val => val !== '') // Loại bỏ ô trống
+
+                .join('\n'); // Nối bằng xuống dòng để Bot Python dễ tách
+
+
 
             if (!links) {
+
                 tg.showAlert("Vui lòng nhập ít nhất 1 link sản phẩm!");
+
                 return;
+
             }
 
-            // Lấy text từ TomSelect (hoặc select gốc)
-            // Khi dùng TomSelect, value của select gốc đã được cập nhật
-            const pVal = document.getElementById('province').value;
-            const dVal = document.getElementById('district').value;
-            const wVal = document.getElementById('ward').value;
 
-            if (!pVal || !dVal || !wVal) {
+
+            // 3. Địa chỉ
+
+            const pName = provinceSelect.options[provinceSelect.selectedIndex]?.text || "";
+
+            const dName = districtSelect.options[districtSelect.selectedIndex]?.text || "";
+
+            const wName = wardSelect.options[wardSelect.selectedIndex]?.text || "";
+
+            if (provinceSelect.value === "" || districtSelect.value === "" || wardSelect.value === "") {
+
                  tg.showAlert("Vui lòng chọn đầy đủ địa chỉ!");
-                 return;
-            }
 
-            // Để lấy Text hiển thị (Tên tỉnh), ta lấy từ options của TomSelect
-            const pName = tomProvince.options[pVal]?.text || "";
-            const dName = tomDistrict.options[dVal]?.text || "";
-            const wName = tomWard.options[wVal]?.text || "";
+                 return;
+
+            }
 
             const fullAddress = `${document.getElementById('addressDetail').value}, ${wName}, ${dName}, ${pName}`;
 
+
+
+            // 4. Gom dữ liệu gửi về Bot
+
             const data = {
-                voucherType: voucherType,
-                link: links,              
+
+                voucherType: voucherType, // Quan trọng: Gửi '60k' hoặc '80k'
+
+                link: links,              // Chuỗi link đã gộp
+
                 phone: document.getElementById('phoneNumber').value || "---",
+
                 code: document.getElementById('productName').value || "---",
+
                 variant: document.getElementById('variant').value,
-                quantity: document.getElementById('quantity').value, 
+
+                quantity: document.getElementById('quantity').value, // Vẫn gửi số lượng cho admin
+
                 address: fullAddress,
+
                 note: document.getElementById('note').value
+
             };
 
+
+
+            // 5. Gửi qua Telegram WebApp SDK
+
             tg.sendData(JSON.stringify(data));
+
         });
+
     </script>
+
 </body>
+
 </html>
